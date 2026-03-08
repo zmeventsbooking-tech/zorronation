@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zorro Nation — AIs</title>
+  <title>Zorro Nation — AI Products</title>
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <meta name="description" content="Zorro Nation AI Tools — Powerful AI-driven automation powering your video content pipeline. From editing to publishing, AI handles the heavy lifting.">
-  <meta property="og:title" content="Zorro Nation — AIs">
-  <meta property="og:description" content="AI-powered video editing, content optimization, multi-platform publishing, and analytics — all automated.">
+  <meta name="description" content="Zorro Nation AI Products — Premium AI-powered tools for trading, content creation, and business automation.">
+  <meta property="og:title" content="Zorro Nation — AI Products">
+  <meta property="og:description" content="Premium AI-powered tools for trading, content creation, and business automation. Built by Zorro Nation.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://zorronation.com/ais.html">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Zorro Nation — AIs">
-  <meta name="twitter:description" content="AI-powered video editing, content optimization, multi-platform publishing, and analytics.">
+  <meta name="twitter:title" content="Zorro Nation — AI Products">
+  <meta name="twitter:description" content="Premium AI-powered tools for trading, content creation, and business automation.">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap');
     :root { --gold:#C9A84C; --black:#0A0A0A; --charcoal:#1A1A1A; --dark-gray:#2A2A2A; --mid-gray:#3A3A3A; --text:#E8E8E8; --text-muted:#999; }
@@ -33,30 +33,42 @@
     .hero h1 { font-family:'Playfair Display',serif; font-size:3.5rem; font-weight:700; color:var(--gold); margin-bottom:20px; line-height:1.1; }
     .hero p { font-size:1.15rem; color:var(--text-muted); max-width:650px; margin:0 auto 40px; }
 
-    /* AI GRID */
-    .ai-section { padding:60px 40px; max-width:1200px; margin:0 auto; }
+    /* PRODUCTS GRID */
+    .products-section { padding:60px 40px; max-width:1200px; margin:0 auto; }
     .section-header { text-align:center; margin-bottom:60px; }
     .section-header h2 { font-family:'Playfair Display',serif; font-size:2.2rem; color:var(--gold); margin-bottom:12px; }
     .section-header p { color:var(--text-muted); font-size:1rem; max-width:600px; margin:0 auto; }
-    .ai-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:28px; }
-    .ai-card { background:var(--charcoal); border:1px solid var(--mid-gray); border-radius:16px; padding:36px 32px; transition:all 0.3s ease; position:relative; overflow:hidden; }
-    .ai-card:hover { border-color:var(--gold); transform:translateY(-4px); box-shadow:0 12px 40px rgba(201,168,76,0.1); }
-    .ai-card .card-icon { font-size:2.4rem; margin-bottom:18px; display:block; }
-    .ai-card h3 { font-family:'Playfair Display',serif; font-size:1.35rem; color:var(--gold); margin-bottom:10px; }
-    .ai-card p { color:var(--text-muted); font-size:0.92rem; line-height:1.7; margin-bottom:18px; }
-    .ai-card .card-features { list-style:none; padding:0; }
-    .ai-card .card-features li { color:var(--text); font-size:0.85rem; padding:6px 0; border-top:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:8px; }
-    .ai-card .card-features li::before { content:"\2713"; color:var(--gold); font-weight:700; font-size:0.9rem; }
 
-    /* WORKFLOW */
-    .workflow-section { padding:80px 40px; background:var(--charcoal); }
-    .workflow-section .section-header { margin-bottom:50px; }
-    .workflow-steps { display:flex; justify-content:center; gap:0; flex-wrap:wrap; max-width:1000px; margin:0 auto; }
-    .workflow-step { text-align:center; padding:30px 24px; flex:1; min-width:180px; position:relative; }
-    .workflow-step .step-num { width:48px; height:48px; border-radius:50%; background:var(--gold); color:var(--black); font-weight:700; font-size:1.1rem; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
-    .workflow-step h4 { color:var(--gold); font-size:0.95rem; margin-bottom:8px; letter-spacing:1px; }
-    .workflow-step p { color:var(--text-muted); font-size:0.82rem; }
-    .workflow-step:not(:last-child)::after { content:"\2192"; position:absolute; right:-12px; top:42px; color:var(--gold); font-size:1.5rem; }
+    .product-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:28px; }
+    .product-card { background:var(--charcoal); border:1px solid var(--mid-gray); border-radius:16px; padding:0; overflow:hidden; transition:all 0.3s ease; display:flex; flex-direction:column; }
+    .product-card:hover { border-color:var(--gold); transform:translateY(-4px); box-shadow:0 12px 40px rgba(201,168,76,0.1); }
+    .product-card.featured { border-color:var(--gold); box-shadow:0 0 30px rgba(201,168,76,0.15); }
+    .product-card.featured .card-badge { display:block; }
+    .card-badge { display:none; background:var(--gold); color:var(--black); text-align:center; padding:8px; font-size:0.75rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+    .card-body { padding:36px 32px; flex:1; display:flex; flex-direction:column; }
+    .card-icon { font-size:2.4rem; margin-bottom:18px; display:block; }
+    .card-body h3 { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--gold); margin-bottom:8px; }
+    .card-body .card-tagline { color:var(--text); font-size:0.95rem; margin-bottom:16px; font-weight:500; }
+    .card-body p { color:var(--text-muted); font-size:0.9rem; line-height:1.7; margin-bottom:20px; }
+    .card-features { list-style:none; padding:0; margin-bottom:24px; flex:1; }
+    .card-features li { color:var(--text); font-size:0.85rem; padding:7px 0; border-top:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:8px; }
+    .card-features li::before { content:"\2713"; color:var(--gold); font-weight:700; font-size:0.9rem; }
+    .card-price { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--gold); font-weight:700; margin-bottom:6px; }
+    .card-price-note { color:var(--text-muted); font-size:0.8rem; margin-bottom:18px; }
+    .card-btn { display:block; text-align:center; padding:14px; background:transparent; border:2px solid var(--gold); color:var(--gold); text-decoration:none; font-weight:700; font-size:0.9rem; border-radius:8px; letter-spacing:1px; transition:all 0.3s; }
+    .card-btn:hover { background:var(--gold); color:var(--black); }
+    .product-card.featured .card-btn { background:var(--gold); color:var(--black); }
+    .product-card.featured .card-btn:hover { background:#B8953F; }
+
+    /* COMING SOON */
+    .coming-soon { padding:80px 40px; background:var(--charcoal); }
+    .coming-soon .section-header { margin-bottom:40px; }
+    .coming-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:24px; max-width:1000px; margin:0 auto; }
+    .coming-card { background:var(--dark-gray); border:1px solid var(--mid-gray); border-radius:12px; padding:30px 26px; text-align:center; opacity:0.7; }
+    .coming-card .card-icon { font-size:2rem; margin-bottom:14px; }
+    .coming-card h4 { font-family:'Playfair Display',serif; color:var(--gold); font-size:1.1rem; margin-bottom:8px; }
+    .coming-card p { color:var(--text-muted); font-size:0.85rem; }
+    .coming-tag { display:inline-block; background:var(--mid-gray); color:var(--gold); font-size:0.65rem; font-weight:700; padding:4px 12px; border-radius:20px; letter-spacing:2px; text-transform:uppercase; margin-top:12px; }
 
     /* CTA */
     .cta-section { text-align:center; padding:80px 40px; background:radial-gradient(ellipse at center, rgba(201,168,76,0.06) 0%, transparent 70%); }
@@ -71,9 +83,8 @@
 
     @media (max-width:768px) {
       .hero h1 { font-size:2.4rem; }
-      .ai-grid { grid-template-columns:1fr; }
-      .workflow-steps { flex-direction:column; align-items:center; }
-      .workflow-step::after { display:none !important; }
+      .product-grid { grid-template-columns:1fr; }
+      .coming-grid { grid-template-columns:1fr; }
       .site-nav { padding:14px 20px; }
       .nav-links .nav-link { padding:6px 14px; font-size:0.75rem; }
     }
@@ -90,130 +101,111 @@
 </div>
 
 <section class="hero">
-  <div class="hero-badge">AI-Powered Pipeline</div>
-  <h1>The AIs Behind<br>Zorro Nation</h1>
-  <p>Every step of your content pipeline is powered by specialized AI agents. From the moment you upload raw footage to the final published post — AI handles the heavy lifting so you can focus on your business.</p>
+  <div class="hero-badge">AI-Powered Tools</div>
+  <h1>AI Products</h1>
+  <p>Premium AI-powered tools built to give you an edge. From automated trading signals to content generation — leverage artificial intelligence to scale your business and stay ahead of the market.</p>
 </section>
 
-<section class="ai-section">
+<section class="products-section">
   <div class="section-header">
-    <h2>AI Agents at Work</h2>
-    <p>Each AI specializes in one part of the pipeline, working together to deliver polished content at scale.</p>
+    <h2>Available Now</h2>
+    <p>Production-ready AI tools you can start using today.</p>
   </div>
-  <div class="ai-grid">
+  <div class="product-grid">
 
-    <div class="ai-card">
-      <span class="card-icon">🎬</span>
-      <h3>Video Editing AI</h3>
-      <p>Automatically cuts, trims, and assembles your raw footage into polished, platform-ready videos.</p>
-      <ul class="card-features">
-        <li>Smart scene detection & cutting</li>
-        <li>Multi-format export (Reels, Shorts, Long-form)</li>
-        <li>Auto color correction & stabilization</li>
-        <li>Silence & dead-space removal</li>
-      </ul>
+    <div class="product-card featured">
+      <div class="card-badge">Most Popular</div>
+      <div class="card-body">
+        <span class="card-icon">🤖</span>
+        <h3>Zorro Trading Bot</h3>
+        <div class="card-tagline">AI-Powered Market Analysis</div>
+        <p>Automated trading signals powered by machine learning. Analyzes market patterns, identifies high-probability setups, and delivers real-time alerts.</p>
+        <ul class="card-features">
+          <li>Real-time market scanning</li>
+          <li>AI pattern recognition</li>
+          <li>Risk management alerts</li>
+          <li>Multi-market coverage (Forex, Crypto, Stocks)</li>
+          <li>Telegram & Discord signal delivery</li>
+        </ul>
+        <div class="card-price">$97/mo</div>
+        <div class="card-price-note">Cancel anytime • 7-day free trial</div>
+        <a href="#" class="card-btn">Get Access</a>
+      </div>
     </div>
 
-    <div class="ai-card">
-      <span class="card-icon">📝</span>
-      <h3>Caption & Subtitle AI</h3>
-      <p>Generates accurate, styled captions synced perfectly to your video — boosting engagement and accessibility.</p>
-      <ul class="card-features">
-        <li>99%+ transcription accuracy</li>
-        <li>Animated caption styles</li>
-        <li>Multi-language support</li>
-        <li>Brand-matched typography</li>
-      </ul>
+    <div class="product-card">
+      <div class="card-badge">Most Popular</div>
+      <div class="card-body">
+        <span class="card-icon">🎬</span>
+        <h3>Content Engine AI</h3>
+        <div class="card-tagline">Auto-Generate Video Content</div>
+        <p>Turn ideas into fully produced short-form videos. AI handles scripting, editing, captions, and thumbnails — ready to post across all platforms.</p>
+        <ul class="card-features">
+          <li>AI script generation from topics</li>
+          <li>Automated video editing & cuts</li>
+          <li>Dynamic caption overlays</li>
+          <li>Thumbnail generation</li>
+          <li>Multi-platform export (TikTok, Reels, Shorts)</li>
+        </ul>
+        <div class="card-price">$197/mo</div>
+        <div class="card-price-note">Included with Growth plan & above</div>
+        <a href="payment.html" class="card-btn">View Plans</a>
+      </div>
     </div>
 
-    <div class="ai-card">
-      <span class="card-icon">🎨</span>
-      <h3>Thumbnail AI</h3>
-      <p>Creates scroll-stopping thumbnails designed to maximize click-through rates on every platform.</p>
-      <ul class="card-features">
-        <li>A/B variant generation</li>
-        <li>Platform-optimized sizing</li>
-        <li>Brand-consistent design</li>
-        <li>Text overlay & composition</li>
-      </ul>
-    </div>
-
-    <div class="ai-card">
-      <span class="card-icon">📈</span>
-      <h3>Content Strategy AI</h3>
-      <p>Analyzes trends, audience data, and performance metrics to recommend what to post and when.</p>
-      <ul class="card-features">
-        <li>Optimal posting schedule</li>
-        <li>Trend & hashtag analysis</li>
-        <li>Audience growth insights</li>
-        <li>Content gap identification</li>
-      </ul>
-    </div>
-
-    <div class="ai-card">
-      <span class="card-icon">🚀</span>
-      <h3>Publishing AI</h3>
-      <p>Distributes your finished content across all platforms simultaneously with optimized metadata.</p>
-      <ul class="card-features">
-        <li>Multi-platform scheduling</li>
-        <li>SEO-optimized titles & descriptions</li>
-        <li>Auto-tagging & categorization</li>
-        <li>Cross-platform format adaptation</li>
-      </ul>
-    </div>
-
-    <div class="ai-card">
-      <span class="card-icon">📊</span>
-      <h3>Analytics AI</h3>
-      <p>Tracks performance across every channel and surfaces actionable insights to grow your audience.</p>
-      <ul class="card-features">
-        <li>Real-time performance dashboards</li>
-        <li>Revenue & ROI tracking</li>
-        <li>Engagement pattern analysis</li>
-        <li>Monthly growth reports</li>
-      </ul>
+    <div class="product-card">
+      <div class="card-badge">Most Popular</div>
+      <div class="card-body">
+        <span class="card-icon">📊</span>
+        <h3>Market Sentiment AI</h3>
+        <div class="card-tagline">Real-Time Sentiment Analysis</div>
+        <p>Scans social media, news, and market data to gauge real-time sentiment. Know what the crowd is thinking before they move the market.</p>
+        <ul class="card-features">
+          <li>Twitter/X & Reddit sentiment tracking</li>
+          <li>News headline analysis</li>
+          <li>Fear & Greed index</li>
+          <li>Whale movement alerts</li>
+          <li>Daily sentiment reports</li>
+        </ul>
+        <div class="card-price">$47/mo</div>
+        <div class="card-price-note">Cancel anytime</div>
+        <a href="#" class="card-btn">Get Access</a>
+      </div>
     </div>
 
   </div>
 </section>
 
-<section class="workflow-section">
+<section class="coming-soon">
   <div class="section-header">
-    <h2>How It All Connects</h2>
-    <p>A seamless pipeline from raw footage to published content.</p>
+    <h2>Coming Soon</h2>
+    <p>New AI products in development. Join the waitlist to get early access.</p>
   </div>
-  <div class="workflow-steps">
-    <div class="workflow-step">
-      <div class="step-num">1</div>
-      <h4>Upload</h4>
-      <p>Drop your raw footage into the pipeline</p>
+  <div class="coming-grid">
+    <div class="coming-card">
+      <span class="card-icon">🗣️</span>
+      <h4>AI Voice Cloning</h4>
+      <p>Clone your voice and generate voiceovers for any script in seconds.</p>
+      <span class="coming-tag">Q2 2025</span>
     </div>
-    <div class="workflow-step">
-      <div class="step-num">2</div>
-      <h4>Edit</h4>
-      <p>AI cuts, polishes & adds captions</p>
+    <div class="coming-card">
+      <span class="card-icon">🧠</span>
+      <h4>Portfolio AI</h4>
+      <p>AI-managed portfolio allocation and rebalancing based on your risk profile.</p>
+      <span class="coming-tag">Q3 2025</span>
     </div>
-    <div class="workflow-step">
-      <div class="step-num">3</div>
-      <h4>Design</h4>
-      <p>Thumbnails & branding applied</p>
-    </div>
-    <div class="workflow-step">
-      <div class="step-num">4</div>
-      <h4>Publish</h4>
-      <p>Content goes live everywhere</p>
-    </div>
-    <div class="workflow-step">
-      <div class="step-num">5</div>
-      <h4>Analyze</h4>
-      <p>Track performance & optimize</p>
+    <div class="coming-card">
+      <span class="card-icon">💬</span>
+      <h4>Zorro Chat AI</h4>
+      <p>Personal AI assistant trained on trading strategies and market analysis.</p>
+      <span class="coming-tag">Q3 2025</span>
     </div>
   </div>
 </section>
 
 <section class="cta-section">
-  <h2>Ready to Let AI Run Your Content?</h2>
-  <p>Join Zorro Nation and let our AI pipeline handle everything from editing to analytics.</p>
+  <h2>Ready to Get Started?</h2>
+  <p>Explore our full suite of AI products and find the right tools for your business.</p>
   <a href="/" class="cta-btn">Start Onboarding</a>
 </section>
 
