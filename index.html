@@ -725,9 +725,21 @@
   }
 
   footer a { color: var(--gold); text-decoration: none; }
+
+    /* ── NAV BAR ── */
+    .site-nav { display:flex; justify-content:space-between; align-items:center; padding:18px 40px; position:sticky; top:0; z-index:1000; background:var(--black); border-bottom:1px solid var(--mid-gray); }
+    .site-nav .nav-logo { font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--gold); font-weight:700; letter-spacing:2px; text-decoration:none; }
+    .site-nav .nav-logo span { color:var(--text); font-weight:400; }
+    .site-nav .nav-link { color:var(--gold); border:1px solid var(--gold); padding:8px 22px; border-radius:6px; text-decoration:none; font-size:0.85rem; font-weight:600; letter-spacing:1px; transition:all 0.3s; }
+    .site-nav .nav-link:hover { background:var(--gold); color:var(--black); }
 </style>
 </head>
 <body>
+<div class="site-nav">
+  <a href="/" class="nav-logo">ZORRO <span>NATION</span></a>
+  <a href="payment.html" class="nav-link">View Pricing</a>
+</div>
+
 
 <!-- ═══════════════ HERO ═══════════════ -->
 <section class="hero" id="hero">
