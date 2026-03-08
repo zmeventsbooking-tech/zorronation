@@ -142,6 +142,57 @@
     50% { transform: translateY(8px); }
   }
 
+
+  /* ── VIDEO SHOWCASE ── */
+  .video-section {
+    padding: 4rem 2rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .video-section .section-label {
+    margin-bottom: 0.5rem;
+  }
+
+  .video-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .video-section p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(201,168,76,0.2);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(201,168,76,0.05);
+  }
+
+  .video-wrapper iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
   /* ── HOW IT WORKS ── */
   .how-section {
     padding: 6rem 2rem;
@@ -688,6 +739,17 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
   </a>
   <div class="scroll-hint">SCROLL TO LEARN MORE</div>
+</section>
+
+
+<!-- ═══════════════ VIDEO SHOWCASE ═══════════════ -->
+<section class="video-section">
+  <div class="section-label">See It In Action</div>
+  <h2>The Zorro Nation Pipeline</h2>
+  <p>Watch how we turn your raw footage into polished, published content — fully automated, every single month.</p>
+  <div class="video-wrapper">
+    <iframe src="https://www.youtube.com/embed/nhO-RfC2gfw?rel=0&modestbranding=1" title="Zorro Nation Video Pipeline" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+  </div>
 </section>
 
 <!-- ═══════════════ HOW IT WORKS ═══════════════ -->
