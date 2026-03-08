@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zorro Nation — Pricing</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700&display=swap');
+
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8D48B;
+      --gold-dark: #A07E2E;
+      --black: #0A0A0A;
+      --charcoal: #1A1A1A;
+      --dark-gray: #2A2A2A;
+      --mid-gray: #3A3A3A;
+      --text: #E8E8E8;
+      --text-muted: #999;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--black);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ====== NAV ====== */
+    .nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.2rem 2rem;
+      background: rgba(10,10,10,0.95);
+      border-bottom: 1px solid var(--mid-gray);
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; color: var(--gold);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--text); font-weight: 400; }
+    .nav-link {
+      color: var(--gold); text-decoration: none; font-size: 0.9rem;
+      font-weight: 500; padding: 0.5rem 1.2rem;
+      border: 1px solid var(--gold); border-radius: 6px;
+      transition: all 0.3s;
+    }
+    .nav-link:hover { background: var(--gold); color: var(--black); }
+
+    /* ====== HERO ====== */
+    .hero {
+      text-align: center; padding: 4rem 1.5rem 2rem;
+      background: radial-gradient(ellipse at top, rgba(201,168,76,0.08) 0%, transparent 60%);
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      margin-bottom: 1rem;
+    }
+    .hero h1 em { color: var(--gold); font-style: normal; }
+    .hero p {
+      color: var(--text-muted); font-size: 1.1rem;
+      max-width: 600px; margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ====== PRICING GRID ====== */
+    .pricing { padding: 2rem 1.5rem 4rem; max-width: 1200px; margin: 0 auto; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--charcoal);
+      border: 1px solid var(--mid-gray);
+      border-radius: 16px;
+      padding: 2.2rem 1.8rem;
+      display: flex; flex-direction: column;
+      position: relative;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+    }
+    .card.popular {
+      border-color: var(--gold);
+      box-shadow: 0 0 30px rgba(201,168,76,0.15);
+    }
+    .badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--gold); color: var(--black);
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      padding: 4px 16px; border-radius: 20px; letter-spacing: 0.5px;
+    }
+
+    .card-tier {
+      font-size: 0.8rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--gold); margin-bottom: 0.8rem;
+    }
+    .card-price {
+      font-size: 3rem; font-weight: 800;
+      margin-bottom: 0.2rem; line-height: 1;
+    }
+    .card-price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
+    .card-desc {
+      color: var(--text-muted); font-size: 0.85rem;
+      margin-bottom: 1.5rem; line-height: 1.5;
+    }
+
+    .features { list-style: none; flex: 1; margin-bottom: 2rem; }
+    .features li {
+      padding: 0.5rem 0; font-size: 0.88rem;
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      color: var(--text);
+    }
+    .features li::before {
+      content: '✓'; color: var(--gold); font-weight: 700;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    .cta {
+      display: block; width: 100%; text-align: center;
+      padding: 0.9rem; border-radius: 10px;
+      font-size: 0.95rem; font-weight: 600;
+      text-decoration: none; transition: all 0.3s;
+      cursor: pointer;
+    }
+    .cta-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: var(--black); border: none;
+    }
+    .cta-primary:hover {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      transform: scale(1.02);
+    }
+    .cta-outline {
+      background: transparent; color: var(--gold);
+      border: 1.5px solid var(--gold);
+    }
+    .cta-outline:hover { background: rgba(201,168,76,0.1); }
+
+    /* ====== COMPARISON TABLE ====== */
+    .compare {
+      max-width: 1000px; margin: 0 auto 4rem;
+      padding: 0 1.5rem;
+    }
+    .compare h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; text-align: center;
+      margin-bottom: 2rem;
+    }
+    .compare h2 em { color: var(--gold); font-style: normal; }
+    .compare table {
+      width: 100%; border-collapse: collapse;
+      background: var(--charcoal); border-radius: 12px;
+      overflow: hidden;
+    }
+    .compare th, .compare td {
+      padding: 0.85rem 1rem; text-align: center;
+      border-bottom: 1px solid var(--mid-gray);
+      font-size: 0.85rem;
+    }
+    .compare th {
+      background: var(--dark-gray); color: var(--gold);
+      font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; font-size: 0.75rem;
+    }
+    .compare td:first-child {
+      text-align: left; color: var(--text); font-weight: 500;
+    }
+    .compare tr:last-child td { border-bottom: none; }
+    .check { color: var(--gold); font-weight: 700; }
+    .dash { color: var(--mid-gray); }
+
+    /* ====== FAQ ====== */
+    .faq {
+      max-width: 700px; margin: 0 auto 4rem;
+      padding: 0 1.5rem;
+    }
+    .faq h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; text-align: center;
+      margin-bottom: 2rem;
+    }
+    .faq-item {
+      border: 1px solid var(--mid-gray); border-radius: 10px;
+      margin-bottom: 0.8rem; overflow: hidden;
+      background: var(--charcoal);
+    }
+    .faq-q {
+      padding: 1rem 1.2rem; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      font-weight: 500; font-size: 0.92rem;
+      transition: color 0.2s;
+    }
+    .faq-q:hover { color: var(--gold); }
+    .faq-q::after {
+      content: '+'; font-size: 1.3rem; color: var(--gold);
+      transition: transform 0.3s;
+    }
+    .faq-item.open .faq-q::after { content: '−'; }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+      padding: 0 1.2rem;
+      color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;
+    }
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding: 0 1.2rem 1rem;
+    }
+
+    /* ====== FOOTER ====== */
+    .footer {
+      text-align: center; padding: 2rem;
+      border-top: 1px solid var(--mid-gray);
+      color: var(--text-muted); font-size: 0.8rem;
+    }
+    .footer a { color: var(--gold); text-decoration: none; }
+
+    /* ====== GUARANTEE ====== */
+    .guarantee {
+      text-align: center; padding: 2.5rem 1.5rem;
+      max-width: 600px; margin: 0 auto 2rem;
+    }
+    .guarantee-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+    .guarantee h3 {
+      font-size: 1.1rem; margin-bottom: 0.5rem;
+      color: var(--gold);
+    }
+    .guarantee p {
+      color: var(--text-muted); font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      .compare { overflow-x: auto; }
+      .compare table { min-width: 500px; }
+      .nav { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="/" class="nav-logo">ZORRO <span>NATION</span></a>
+    <a href="/" class="nav-link">Start Onboarding</a>
+  </nav>
+
+  <section class="hero">
+    <h1>Professional Video, <em>Simplified</em></h1>
+    <p>Choose the plan that fits your content goals. Every plan includes editing, optimization, and publishing — handled by our team.</p>
+  </section>
+
+  <section class="pricing">
+    <div class="grid">
+
+      <!-- STARTER -->
+      <div class="card">
+        <div class="card-tier">Starter</div>
+        <div class="card-price">$197<span>/mo</span></div>
+        <p class="card-desc">Perfect for creators just getting started with consistent video content.</p>
+        <ul class="features">
+          <li>Up to 4 videos per month</li>
+          <li>Professional editing &amp; color grading</li>
+          <li>Up to 3 platform uploads</li>
+          <li>Basic SEO titles &amp; descriptions</li>
+          <li>48-hour turnaround</li>
+        </ul>
+        <a href="https://buy.stripe.com/5kQ5kEaXrdXA2MB2UF4Ni00" class="cta cta-outline">Get Started</a>
+      </div>
+
+      <!-- GROWTH -->
+      <div class="card">
+        <div class="card-tier">Growth</div>
+        <div class="card-price">$297<span>/mo</span></div>
+        <p class="card-desc">For businesses ready to scale their presence across multiple platforms.</p>
+        <ul class="features">
+          <li>Up to 8 videos per month</li>
+          <li>Professional editing &amp; color grading</li>
+          <li>Up to 3 platform uploads</li>
+          <li>Custom thumbnails</li>
+          <li>Caption overlays</li>
+          <li>36-hour turnaround</li>
+        </ul>
+        <a href="https://buy.stripe.com/9B69AU0iN4n0gDr52N4Ni01" class="cta cta-outline">Get Started</a>
+      </div>
+
+      <!-- PRO -->
+      <div class="card popular">
+        <div class="badge">Most Popular</div>
+        <div class="card-tier">Pro</div>
+        <div class="card-price">$497<span>/mo</span></div>
+        <p class="card-desc">Full-service video pipeline for serious brands building an audience.</p>
+        <ul class="features">
+          <li>Up to 15 videos per month</li>
+          <li>Advanced editing with motion graphics</li>
+          <li>Up to 5 platform uploads</li>
+          <li>Custom thumbnails + captions</li>
+          <li>Analytics dashboard</li>
+          <li>Dedicated Slack channel</li>
+          <li>24-hour turnaround</li>
+        </ul>
+        <a href="https://buy.stripe.com/14A4gAaXrcTwaf3dzj4Ni02" class="cta cta-primary">Get Started</a>
+      </div>
+
+      <!-- ELITE -->
+      <div class="card">
+        <div class="card-tier">Elite</div>
+        <div class="card-price">$797<span>/mo</span></div>
+        <p class="card-desc">Enterprise-grade content engine for brands that need maximum output.</p>
+        <ul class="features">
+          <li>Unlimited videos (60+/mo)</li>
+          <li>Premium editing, graphics &amp; effects</li>
+          <li>All platform uploads</li>
+          <li>Custom thumbnails + captions</li>
+          <li>Analytics + performance reports</li>
+          <li>Priority Slack support</li>
+          <li>Same-day turnaround</li>
+          <li>Dedicated account manager</li>
+        </ul>
+        <a href="https://buy.stripe.com/14A7sMe9DcTwcnb0Mx4Ni03" class="cta cta-outline">Get Started</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <section class="compare">
+    <h2>Compare <em>Plans</em></h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Starter</th>
+          <th>Growth</th>
+          <th>Pro</th>
+          <th>Elite</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Videos per month</td><td>4</td><td>8</td><td>15</td><td>60+</td></tr>
+        <tr><td>Professional editing</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Platform uploads</td><td>3</td><td>3</td><td>5</td><td>All</td></tr>
+        <tr><td>Custom thumbnails</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Caption overlays</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Motion graphics</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Analytics dashboard</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Dedicated Slack channel</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Turnaround time</td><td>48hr</td><td>36hr</td><td>24hr</td><td>Same day</td></tr>
+        <tr><td>Account manager</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- GUARANTEE -->
+  <section class="guarantee">
+    <div class="guarantee-icon">🛡️</div>
+    <h3>100% Satisfaction Guarantee</h3>
+    <p>Not happy with your first month? We’ll refund you in full, no questions asked. We’re that confident in our work.</p>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <h2>Questions? We Got You.</h2>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How does the video pipeline work?</div>
+      <div class="faq-a">You send us your raw footage or content ideas. Our team edits, optimizes, and publishes directly to your platforms. You review and approve everything through your dedicated Slack channel.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can I change my plan later?</div>
+      <div class="faq-a">Absolutely. You can upgrade or downgrade your plan at any time. Changes take effect on your next billing cycle.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What platforms do you publish to?</div>
+      <div class="faq-a">We support YouTube, Instagram (Reels &amp; Stories), TikTok, Facebook, LinkedIn, and Twitter/X. Our Pro and Elite plans cover more platforms simultaneously.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What if I need more videos than my plan includes?</div>
+      <div class="faq-a">You can always upgrade to the next tier, or we can arrange additional videos on a per-project basis. Just reach out through Slack.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do I need to provide my own footage?</div>
+      <div class="faq-a">Not necessarily. We can work with raw footage you provide, existing content you want repurposed, or we can help source stock footage and graphics to build videos from scratch.</div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 Zorro Nation, a division of Zorro Markets LLC. All rights reserved.</p>
+    <p style="margin-top: 0.5rem;"><a href="/">Back to Onboarding</a></p>
+  </footer>
+
+</body>
+</html>
