@@ -1,182 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zorro Nation — Slack Community</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <meta name="description" content="Join the Zorro Nation private Slack community. Trading insights, AI tools, market analysis, and exclusive content. $50/month membership.">
-    <meta property="og:title" content="Zorro Nation — Slack Community">
-    <meta property="og:description" content="Private Slack community for traders and creators. Real-time market insights, AI tools discussion, and networking. $50/mo.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://zorronation.com/community.html">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Zorro Nation — Slack Community">
-    <meta name="twitter:description" content="Private Slack community for traders and creators. Real-time market insights, AI tools discussion, and networking. $50/mo.">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap');
-        :root { --gold:#C9A84C; --black:#0A0A0A; --charcoal:#1A1A1A; --dark-gray:#2A2A2A; --mid-gray:#3A3A3A; --text:#E8E8E8; --text-muted:#999; }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Inter',sans-serif; background:var(--black); color:var(--text); }
-        .nav { display:flex; justify-content:space-between; align-items:center; padding:18px 40px; position:sticky; top:0; z-index:1000; background:var(--black); border-bottom:1px solid var(--mid-gray); }
-        .nav-logo { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--gold); text-decoration:none; }
-        .nav-logo span { color:var(--text); font-weight:400; }
-        .nav-links { display:flex; gap:12px; align-items:center; }
-        .nav-link { color:var(--gold); text-decoration:none; font-size:0.85rem; font-weight:600; letter-spacing:1px; padding:8px 20px; border:1px solid var(--gold); border-radius:6px; transition:all 0.3s; }
-        .nav-link:hover { background:var(--gold); color:var(--black); }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zorro Nation — Slack Community</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <meta name="description" content="Join the Zorro Nation private Slack community. Real-time trading signals, AI tools, and exclusive network access for $50/month.">
+  <meta property="og:title" content="Zorro Nation — Slack Community">
+  <meta property="og:description" content="Private trading community with real-time signals, AI tools, and exclusive network access.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://zorronation.com/community.html">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
 
-        .hero { text-align:center; padding:80px 20px 60px; background:radial-gradient(ellipse at center, rgba(201,168,76,0.08) 0%, transparent 70%); }
-        .badge { display:inline-block; border:1px solid var(--gold); color:var(--gold); padding:8px 24px; border-radius:50px; font-size:0.75rem; letter-spacing:3px; text-transform:uppercase; margin-bottom:30px; }
-        .hero h1 { font-family:'Playfair Display',serif; font-size:3.2rem; color:var(--gold); margin-bottom:20px; }
-        .hero p { color:var(--text-muted); font-size:1.1rem; max-width:600px; margin:0 auto 40px; line-height:1.7; }
+    :root {
+      --gold: #C9A84C;
+      --black: #0A0A0A;
+      --charcoal: #1A1A1A;
+      --dark-gray: #2A2A2A;
+      --text: #E8E8E8;
+      --purple: #8B5CF6;
+      --blue: #3B82F6;
+      --cyan: #06B6D4;
+      --emerald: #10B981;
+      --pink: #EC4899;
+      --orange: #F97316;
+      --red: #EF4444;
+      --yellow: #EAB308;
+    }
 
-        .pricing-card { max-width:480px; margin:0 auto 60px; background:var(--charcoal); border:2px solid var(--gold); border-radius:16px; overflow:hidden; }
-        .pricing-header { background:var(--gold); color:var(--black); text-align:center; padding:20px; }
-        .pricing-header h2 { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; }
-        .pricing-body { padding:40px 30px; text-align:center; }
-        .price { font-size:3.5rem; font-weight:800; color:var(--text); margin-bottom:5px; }
-        .price span { font-size:1.2rem; font-weight:400; color:var(--text-muted); }
-        .price-note { color:var(--text-muted); font-size:0.85rem; margin-bottom:30px; }
-        .join-btn { display:inline-block; background:var(--gold); color:var(--black); padding:16px 48px; border-radius:8px; text-decoration:none; font-weight:700; font-size:1.05rem; letter-spacing:0.5px; transition:all 0.3s; border:2px solid var(--gold); }
-        .join-btn:hover { background:transparent; color:var(--gold); }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: var(--black); color: var(--text); overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
 
-        .features { max-width:900px; margin:0 auto; padding:0 20px 80px; }
-        .features h2 { font-family:'Playfair Display',serif; font-size:2.2rem; color:var(--gold); text-align:center; margin-bottom:50px; }
-        .features-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:24px; }
-        .feature-card { background:var(--charcoal); border:1px solid var(--dark-gray); border-radius:12px; padding:30px; transition:border-color 0.3s; }
-        .feature-card:hover { border-color:var(--gold); }
-        .feature-icon { font-size:2rem; margin-bottom:15px; }
-        .feature-card h3 { color:var(--text); font-size:1rem; margin-bottom:10px; }
-        .feature-card p { color:var(--text-muted); font-size:0.9rem; line-height:1.6; }
+    /* Animated gradient background */
+    .gradient-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(139,92,246,0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(236,72,153,0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 90%, rgba(6,182,212,0.08) 0%, transparent 50%);
+      animation: gradientShift 8s ease-in-out infinite alternate;
+    }
+    @keyframes gradientShift {
+      0% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
 
-        .rules { max-width:700px; margin:0 auto; padding:0 20px 80px; }
-        .rules h2 { font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold); text-align:center; margin-bottom:30px; }
-        .rules-box { background:var(--charcoal); border:1px solid var(--dark-gray); border-radius:12px; padding:30px; }
-        .rule { display:flex; gap:15px; align-items:flex-start; margin-bottom:20px; }
-        .rule:last-child { margin-bottom:0; }
-        .rule-icon { color:var(--gold); font-size:1.2rem; flex-shrink:0; margin-top:2px; }
-        .rule p { color:var(--text-muted); font-size:0.9rem; line-height:1.6; }
-        .rule strong { color:var(--text); }
+    /* Floating orbs */
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(80px); z-index: 0; pointer-events: none; animation: float 6s ease-in-out infinite;
+    }
+    .orb-1 { width: 300px; height: 300px; background: rgba(139,92,246,0.2); top: 10%; left: -5%; animation-delay: 0s; }
+    .orb-2 { width: 250px; height: 250px; background: rgba(59,130,246,0.15); top: 60%; right: -5%; animation-delay: 2s; }
+    .orb-3 { width: 200px; height: 200px; background: rgba(236,72,153,0.12); bottom: 10%; left: 30%; animation-delay: 4s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-30px); }
+    }
 
-        .cta { text-align:center; padding:60px 20px 80px; background:radial-gradient(ellipse at center, rgba(201,168,76,0.06) 0%, transparent 70%); }
-        .cta h2 { font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold); margin-bottom:15px; }
-        .cta p { color:var(--text-muted); margin-bottom:30px; font-size:1rem; }
+    .content { position: relative; z-index: 1; }
 
-        .footer { text-align:center; padding:30px 20px; border-top:1px solid var(--dark-gray); }
-        .footer-links { display:flex; justify-content:center; gap:24px; margin-bottom:15px; }
-        .footer-links a { color:var(--text-muted); text-decoration:none; font-size:0.85rem; transition:color 0.3s; }
-        .footer-links a:hover { color:var(--gold); }
-        .footer p { color:#555; font-size:0.75rem; }
+    /* Nav */
+    .nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 40px; background: rgba(10,10,10,0.8); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(139,92,246,0.3); position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--gold); }
+    .nav-logo span { color: var(--text); }
+    .nav-links { display: flex; gap: 12px; align-items: center; }
+    .nav-link {
+      padding: 8px 18px; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px;
+      font-size: 0.85rem; font-weight: 500; transition: all 0.3s;
+      background: rgba(255,255,255,0.05);
+    }
+    .nav-link:hover { border-color: var(--purple); background: rgba(139,92,246,0.1); color: #fff; }
 
-        @media (max-width:600px) {
-            .hero h1 { font-size:2.2rem; }
-            .price { font-size:2.8rem; }
-            .nav { padding:14px 20px; }
-            .features-grid { grid-template-columns:1fr; }
-        }
-    </style>
+    /* Hero */
+    .hero {
+      text-align: center; padding: 100px 20px 60px;
+      background: linear-gradient(180deg, rgba(139,92,246,0.08) 0%, transparent 100%);
+    }
+    .badge {
+      display: inline-block; padding: 8px 24px; border-radius: 50px;
+      background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(236,72,153,0.2));
+      border: 1px solid rgba(139,92,246,0.4);
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--purple); margin-bottom: 30px;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif; font-size: 4rem;
+      background: linear-gradient(135deg, var(--gold), var(--purple), var(--blue), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 20px; line-height: 1.1;
+    }
+    .hero p { font-size: 1.15rem; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto; line-height: 1.7; }
+
+    /* Pricing Card */
+    .pricing-section { display: flex; justify-content: center; padding: 40px 20px 80px; }
+    .pricing-card {
+      width: 400px; border-radius: 24px; overflow: hidden; position: relative;
+      background: linear-gradient(135deg, var(--charcoal), var(--dark-gray));
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    .pricing-card::before {
+      content: ''; position: absolute; inset: -2px; border-radius: 24px; z-index: -1;
+      background: linear-gradient(135deg, var(--purple), var(--blue), var(--cyan), var(--emerald));
+      animation: borderRotate 4s linear infinite;
+    }
+    @keyframes borderRotate {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+    .pricing-header {
+      text-align: center; padding: 40px 30px 30px;
+      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(59,130,246,0.1));
+    }
+    .pricing-header h3 { font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 15px; }
+    .price {
+      font-size: 4.5rem; font-weight: 900; line-height: 1;
+      background: linear-gradient(135deg, #fff, var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .price span { font-size: 1.5rem; font-weight: 400; }
+    .pricing-meta { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 8px; }
+    .pricing-body { padding: 30px; }
+    .join-btn {
+      display: block; width: 100%; padding: 18px; border: none; border-radius: 14px;
+      font-size: 1.1rem; font-weight: 700; cursor: pointer; text-align: center;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: #fff; transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .join-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(139,92,246,0.4); }
+    .join-btn::after {
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: linear-gradient(transparent, rgba(255,255,255,0.1), transparent);
+      transform: rotate(45deg); animation: shimmer 3s ease-in-out infinite;
+    }
+    @keyframes shimmer { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
+    .perks { list-style: none; margin-top: 20px; }
+    .perks li { padding: 8px 0; font-size: 0.9rem; color: rgba(255,255,255,0.7); display: flex; align-items: center; gap: 10px; }
+    .perks li::before { content: '✓'; color: var(--emerald); font-weight: 700; font-size: 1.1rem; }
+
+    /* Features */
+    .features { padding: 60px 20px 80px; max-width: 1100px; margin: 0 auto; }
+    .features h2 {
+      text-align: center; font-family: 'Playfair Display', serif; font-size: 2.5rem;
+      margin-bottom: 50px;
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .feature-card {
+      padding: 30px; border-radius: 20px; transition: all 0.4s;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      border-radius: 20px 20px 0 0;
+    }
+    .feature-card:nth-child(1)::before { background: linear-gradient(90deg, var(--purple), var(--blue)); }
+    .feature-card:nth-child(2)::before { background: linear-gradient(90deg, var(--cyan), var(--emerald)); }
+    .feature-card:nth-child(3)::before { background: linear-gradient(90deg, var(--pink), var(--orange)); }
+    .feature-card:nth-child(4)::before { background: linear-gradient(90deg, var(--yellow), var(--emerald)); }
+    .feature-card:nth-child(5)::before { background: linear-gradient(90deg, var(--blue), var(--purple)); }
+    .feature-card:nth-child(6)::before { background: linear-gradient(90deg, var(--red), var(--pink)); }
+    .feature-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); }
+    .feature-icon { font-size: 2.2rem; margin-bottom: 15px; }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
+    .feature-card p { font-size: 0.9rem; color: rgba(255,255,255,0.6); line-height: 1.6; }
+
+    /* Terms */
+    .terms { padding: 60px 20px 80px; max-width: 700px; margin: 0 auto; }
+    .terms h2 {
+      text-align: center; font-family: 'Playfair Display', serif; font-size: 2rem;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, var(--orange), var(--red));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .terms-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px; padding: 30px;
+    }
+    .term { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; gap: 15px; align-items: flex-start; }
+    .term:last-child { border-bottom: none; }
+    .term-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .term h4 { font-weight: 700; margin-bottom: 4px; color: #fff; }
+    .term p { font-size: 0.88rem; color: rgba(255,255,255,0.6); line-height: 1.5; }
+
+    /* CTA */
+    .cta {
+      text-align: center; padding: 80px 20px;
+      background: linear-gradient(180deg, transparent, rgba(139,92,246,0.08), rgba(59,130,246,0.08), transparent);
+    }
+    .cta h2 {
+      font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 15px;
+      background: linear-gradient(135deg, #fff, var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .cta p { color: rgba(255,255,255,0.6); margin-bottom: 30px; font-size: 1.05rem; }
+    .cta-btn {
+      display: inline-block; padding: 18px 50px; border-radius: 14px;
+      font-size: 1.1rem; font-weight: 700; color: #fff;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(236,72,153,0.4); }
+
+    /* Footer */
+    .footer {
+      text-align: center; padding: 40px 20px; border-top: 1px solid rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.4); font-size: 0.85rem;
+    }
+    .footer-links { margin-bottom: 15px; display: flex; justify-content: center; gap: 20px; }
+    .footer-links a { color: rgba(255,255,255,0.5); transition: color 0.3s; }
+    .footer-links a:hover { color: var(--purple); }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      .nav { padding: 15px 20px; flex-wrap: wrap; gap: 10px; }
+      .nav-links { flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
 </head>
 <body>
 
+<div class="gradient-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="content">
+
 <nav class="nav">
-    <a href="/" class="nav-logo">ZORRO <span>NATION</span></a>
-    <div class="nav-links">
-        <a href="ais.html" class="nav-link">AI Products</a>
-        <a href="payment.html" class="nav-link">Pricing</a>
-        <a href="/" class="nav-link">Onboarding</a>
-    </div>
+  <a href="/" class="nav-logo">ZORRO <span>NATION</span></a>
+  <div class="nav-links">
+    <a href="ais.html" class="nav-link">AI Products</a>
+    <a href="payment.html" class="nav-link">Pricing</a>
+    <a href="/" class="nav-link">Onboarding</a>
+  </div>
 </nav>
 
 <section class="hero">
-    <div class="badge">Private Community</div>
-    <h1>Zorro Nation Slack</h1>
-    <p>Join the inner circle. Get real-time trading signals, AI tool updates, market analysis, and direct access to the Zorro Nation network. Members only.</p>
+  <div class="badge">⚡ Private Community</div>
+  <h1>Zorro Nation Slack</h1>
+  <p>Join the inner circle. Get real-time trading signals, AI tool updates, market analysis, and direct access to the Zorro Nation network. Members only.</p>
 </section>
 
-<div class="pricing-card">
+<section class="pricing-section">
+  <div class="pricing-card">
     <div class="pricing-header">
-        <h2>Monthly Membership</h2>
+      <h3>Monthly Membership</h3>
+      <div class="price">$50<span>/mo</span></div>
+      <div class="pricing-meta">Cancel anytime • Billed monthly • Instant Slack access</div>
     </div>
     <div class="pricing-body">
-        <div class="price">$50<span>/mo</span></div>
-        <p class="price-note">Cancel anytime • Billed monthly • Instant Slack access</p>
-        <a href="https://buy.stripe.com/4gM28s7Lf06K4UJ0Mx4Ni04" class="join-btn">Join the Community →</a>
+      <a href="https://buy.stripe.com/4gM28s7Lf06K4UJ0Mx4Ni04" class="join-btn">Join the Community →</a>
+      <ul class="perks">
+        <li>Real-time trading signals & alerts</li>
+        <li>Early access to AI tools & bots</li>
+        <li>Direct networking with traders</li>
+        <li>Weekly market analysis drops</li>
+        <li>Education resources & guides</li>
+        <li>Priority support from the team</li>
+      </ul>
     </div>
-</div>
-
-<section class="features">
-    <h2>What You Get</h2>
-    <div class="features-grid">
-        <div class="feature-card">
-            <div class="feature-icon">📈</div>
-            <h3>Real-Time Trading Signals</h3>
-            <p>Live market alerts, entry/exit points, and trade setups shared by King Zorro and the community.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🤖</div>
-            <h3>AI Tools & Bots</h3>
-            <p>Early access to Zorro Trading Bot updates, Content Engine AI previews, and beta features before public release.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🌐</div>
-            <h3>Exclusive Network</h3>
-            <p>Connect with serious traders and content creators. Collaborate, share strategies, and build together.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🎯</div>
-            <h3>Market Analysis</h3>
-            <p>Daily market breakdowns, sentiment analysis, and macro insights to keep you ahead of the crowd.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">📚</div>
-            <h3>Education & Resources</h3>
-            <p>Trading guides, AI workflow tutorials, and exclusive content not available anywhere else.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">⚡</div>
-            <h3>Priority Support</h3>
-            <p>Direct access to the Zorro Nation team. Get your questions answered fast with priority response.</p>
-        </div>
-    </div>
+  </div>
 </section>
 
-<section class="rules">
-    <h2>Membership Terms</h2>
-    <div class="rules-box">
-        <div class="rule">
-            <span class="rule-icon">⚠️</span>
-            <p><strong>Active subscription required.</strong> Your Slack access is tied directly to your $50/month subscription. If payment fails or is cancelled, you will be removed from the channel automatically.</p>
-        </div>
-        <div class="rule">
-            <span class="rule-icon">🔒</span>
-            <p><strong>Private & confidential.</strong> All content shared in the Slack community is for members only. Do not screenshot, share, or redistribute signals, strategies, or proprietary content.</p>
-        </div>
-        <div class="rule">
-            <span class="rule-icon">✅</span>
-            <p><strong>Instant access.</strong> After payment, you will receive a Slack invite link via email within minutes. Use the same email you paid with.</p>
-        </div>
-        <div class="rule">
-            <span class="rule-icon">💳</span>
-            <p><strong>No refunds on current billing cycle.</strong> You can cancel anytime and retain access until the end of your billing period. No partial refunds.</p>
-        </div>
+<section class="features">
+  <h2>What You Get</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <h3>Trading Signals</h3>
+      <p>Live market alerts, entry/exit points, and real-time trade ideas from experienced traders.</p>
     </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <h3>AI Tools & Bots</h3>
+      <p>Early access to Zorro Trading Bot updates, Content Engine AI, and Market Sentiment AI.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌐</div>
+      <h3>Exclusive Network</h3>
+      <p>Connect with serious traders and content creators building real wealth in the markets.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Market Analysis</h3>
+      <p>Weekly deep dives, sector breakdowns, and macro analysis to keep you ahead of the curve.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎓</div>
+      <h3>Education</h3>
+      <p>Trading strategies, risk management guides, and content creation playbooks for members.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🚀</div>
+      <h3>Priority Support</h3>
+      <p>Direct line to the Zorro Nation team. Get help with tools, strategies, and account issues fast.</p>
+    </div>
+  </div>
+</section>
+
+<section class="terms">
+  <h2>Membership Terms</h2>
+  <div class="terms-card">
+    <div class="term">
+      <div class="term-icon">⚠️</div>
+      <div>
+        <h4>Active subscription required.</h4>
+        <p>Your Slack access is tied directly to your $50/month subscription. If payment fails or is cancelled, you will be removed from the channel automatically.</p>
+      </div>
+    </div>
+    <div class="term">
+      <div class="term-icon">🔒</div>
+      <div>
+        <h4>Private & confidential.</h4>
+        <p>All content shared in the Slack community is for members only. Do not screenshot, share, or redistribute signals, strategies, or proprietary content.</p>
+      </div>
+    </div>
+    <div class="term">
+      <div class="term-icon">✅</div>
+      <div>
+        <h4>Instant access.</h4>
+        <p>After payment, you will receive a Slack invite link via email within minutes. Use the same email you paid with.</p>
+      </div>
+    </div>
+    <div class="term">
+      <div class="term-icon">📦</div>
+      <div>
+        <h4>No refunds on current billing cycle.</h4>
+        <p>You can cancel anytime and retain access until the end of your billing period. No partial refunds.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section class="cta">
-    <h2>Ready to Join?</h2>
-    <p>Lock in your spot in the Zorro Nation community today.</p>
-    <a href="https://buy.stripe.com/4gM28s7Lf06K4UJ0Mx4Ni04" class="join-btn">Join for $50/mo →</a>
+  <h2>Ready to Join?</h2>
+  <p>Get instant access to the Zorro Nation Slack for $50/month.</p>
+  <a href="https://buy.stripe.com/4gM28s7Lf06K4UJ0Mx4Ni04" class="cta-btn">Join for $50/mo →</a>
 </section>
 
 <footer class="footer">
-    <div class="footer-links">
-        <a href="/">Home</a>
-        <a href="payment.html">Pricing</a>
-        <a href="ais.html">AI Products</a>
-        <a href="community.html">Community</a>
-    </div>
-    <p>© 2025 Zorro Nation — Zorro Markets LLC. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="/">Onboarding</a>
+    <a href="ais.html">AI Products</a>
+    <a href="payment.html">Pricing</a>
+    <a href="community.html">Community</a>
+  </div>
+  <p>© 2025 Zorro Nation. All rights reserved.</p>
 </footer>
 
+</div>
 </body>
 </html>
