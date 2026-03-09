@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Zorro Nation</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #0a0a0a;
+            color: #e8e8e8;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            overflow: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(147, 112, 219, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container { position: relative; z-index: 1; max-width: 560px; }
+        .badge {
+            display: inline-block;
+            border: 1px solid rgba(147, 112, 219, 0.4);
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #b89cdb;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, #c9a0ff 0%, #8b6cc7 50%, #e8e8e8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle { font-size: 1.1rem; color: #aaa; line-height: 1.7; margin-bottom: 2.5rem; }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #7c5cbf 0%, #9b6dd7 100%);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 24px rgba(124, 92, 191, 0.3);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 32px rgba(124, 92, 191, 0.45); }
+        .countdown { margin-top: 1.5rem; font-size: 0.85rem; color: #666; }
+        .footer { position: fixed; bottom: 1.5rem; font-size: 0.75rem; color: #444; }
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            .subtitle { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="badge">⚡ Members Only</div>
+        <h1>Welcome to Zorro Nation</h1>
+        <p class="subtitle">
+            Your payment has been confirmed. Click below to join the private
+            Zorro Nation Slack community — your hub for real-time trading signals,
+            AI tool updates, and direct access to the network.
+        </p>
+        <a href="https://join.slack.com/t/zorronation/shared_invite/zt-3rvga2dol-glITZrDDf8naip5kpzOu6A" class="btn" id="joinBtn">
+            Join the Slack →
+        </a>
+        <p class="countdown" id="countdown">You'll be redirected automatically in <strong>10</strong> seconds...</p>
+    </div>
+    <div class="footer">© 2026 Zorro Nation — A Zorro Markets LLC Service</div>
+    <script>
+        const SLACK_INVITE_URL = "https://join.slack.com/t/zorronation/shared_invite/zt-3rvga2dol-glITZrDDf8naip5kpzOu6A";
+        document.getElementById('joinBtn').href = SLACK_INVITE_URL;
+        let seconds = 10;
+        const timer = setInterval(() => {
+            seconds--;
+            const strong = document.querySelector('#countdown strong');
+            if (strong) strong.textContent = seconds;
+            if (seconds <= 0) {
+                clearInterval(timer);
+                window.location.href = SLACK_INVITE_URL;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
