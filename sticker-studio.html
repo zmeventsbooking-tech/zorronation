@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zorro Sticker Studio — AI-Powered Slack Stickers | Zorronation</title>
+<meta name="description" content="Generate gangster-themed AI Slack stickers in seconds. Free to try. Powered by Zorronation AI.">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+/* ═══════════════════════════════════════════
+   ZORRONATION — AI STICKER STUDIO
+   Brand: Black / Gold / Red — Cinematic Drip
+═══════════════════════════════════════════ */
+:root {
+  --black:#080808; --black2:#0f0f0f; --black3:#161616; --black4:#1e1e1e;
+  --gold:#c9a84c; --gold2:#f0d060; --gold3:#ffd700;
+  --red:#cc2200; --red2:#ff3a1a;
+  --text:#ede8df; --muted:#6b6660; --muted2:#4a4540;
+  --border:#272320; --border2:#332e28;
+  --green:#00c853; --stripe:#635bff;
+
+  /* CONFIG — swap these in production */
+  --stripe-pk: 'pk_test_REPLACE_WITH_YOUR_STRIPE_KEY';
+  --ghl-webhook: 'https://YOUR_GHL_WEBHOOK_URL_HERE';
+  --premium-price-id: 'price_REPLACE_WITH_STRIPE_PRICE_ID';
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* GRAIN */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;mix-blend-mode:overlay;}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border2);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:58px;}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:var(--gold);text-decoration:none;}
+.nav-logo span{color:var(--red);}
+.nav-badge{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;font-family:'DM Mono',monospace;font-size:0.6rem;font-weight:500;letter-spacing:2px;padding:4px 10px;border-radius:20px;text-transform:uppercase;}
+.nav-premium-btn{background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:2px;padding:7px 18px;border-radius:6px;cursor:pointer;transition:all 0.2s;}
+.nav-premium-btn:hover{background:var(--gold);color:#000;}
+.nav-premium-btn.unlocked{border-color:var(--green);color:var(--green);}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:60px 20px 40px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-50%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(201,168,76,0.08) 0%,transparent 70%);pointer-events:none;}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:0.8;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,6rem);line-height:0.92;letter-spacing:2px;color:var(--text);}
+.hero h1 .accent{color:var(--gold);display:block;}
+.hero h1 .red{color:var(--red);}
+.hero-sub{font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--muted);letter-spacing:2px;margin-top:18px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.8;}
+.hero-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px;}
+.pill{background:var(--black4);border:1px solid var(--border2);border-radius:20px;padding:6px 14px;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:1px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.pill-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+.pill-dot.gold{background:var(--gold);}
+.pill-dot.red{background:var(--red);}
+
+/* ── FREE COUNTER ── */
+.free-counter{background:var(--black3);border:1px solid var(--border2);border-top:2px solid var(--gold);padding:10px 20px;text-align:center;font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:12px;}
+.counter-bar{flex:1;max-width:200px;height:4px;background:var(--black4);border-radius:2px;overflow:hidden;}
+.counter-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;transition:width 0.5s;}
+.free-counter.premium-active{border-top-color:var(--green);background:rgba(0,200,83,0.04);}
+
+/* ── MAIN LAYOUT ── */
+.app-shell{display:grid;grid-template-columns:300px 1fr 280px;min-height:calc(100vh - 58px - 120px);}
+
+/* ── SIDEBAR ── */
+.sidebar{background:var(--black2);border-right:1px solid var(--border);padding:20px;overflow-y:auto;max-height:80vh;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.sidebar-section{margin-bottom:6px;}
+.s-title{font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:3px;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;margin-top:18px;display:flex;align-items:center;gap:8px;}
+.s-title:first-child{margin-top:0;}
+.s-title .ai-badge{background:rgba(201,168,76,0.15);border:1px solid var(--gold);color:var(--gold);font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:2px;padding:2px 6px;border-radius:3px;}
+.s-title .pro-badge{background:rgba(204,34,0,0.15);border:1px solid var(--red);color:var(--red);font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:2px;padding:2px 6px;border-radius:3px;}
+
+.mode-tabs{display:flex;background:var(--black4);border-radius:8px;overflow:hidden;border:1px solid var(--border);margin-bottom:16px;}
+.m-tab{flex:1;padding:9px 6px;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:0.8rem;letter-spacing:1px;color:var(--muted);background:transparent;border:none;transition:all 0.2s;text-align:center;}
+.m-tab.active{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;}
+
+.mode-panel{display:none;}
+.mode-panel.active{display:block;}
+
+label{display:block;font-family:'DM Mono',monospace;font-size:0.64rem;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;margin-top:12px;}
+input[type="text"],input[type="email"],textarea,select{width:100%;background:var(--black4);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:8px 11px;font-family:'DM Mono',monospace;font-size:0.8rem;outline:none;transition:border-color 0.2s;}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);}
+select option{background:var(--black4);}
+textarea{resize:vertical;min-height:55px;line-height:1.5;}
+input[type="range"]{width:100%;accent-color:var(--gold);margin-top:5px;}
+
+.franchise-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.f-btn{background:var(--black4);border:1px solid var(--border);border-radius:6px;color:var(--muted);padding:7px 4px;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:1px;text-align:center;transition:all 0.15s;}
+.f-btn:hover{border-color:var(--gold);color:var(--gold);}
+.f-btn.active{border-color:var(--gold);background:rgba(201,168,76,0.1);color:var(--gold);}
+
+.quote-list{display:flex;flex-direction:column;gap:4px;max-height:160px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.q-pill{background:var(--black4);border:1px solid var(--border);border-left:2px solid var(--red);border-radius:4px;padding:6px 9px;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.64rem;color:var(--muted);transition:all 0.15s;line-height:1.4;}
+.q-pill:hover{border-left-color:var(--gold);color:var(--text);}
+.q-pill.active{border-left-color:var(--gold2);color:var(--gold2);background:rgba(201,168,76,0.05);}
+
+.emoji-grid{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.e-btn{background:var(--black4);border:1px solid var(--border);border-radius:5px;padding:5px 6px;cursor:pointer;font-size:0.95rem;transition:all 0.15s;}
+.e-btn:hover{border-color:var(--gold);}
+
+/* AI Prompt input */
+.ai-prompt-wrap{position:relative;}
+.ai-prompt-wrap textarea{padding-right:38px;border-color:rgba(201,168,76,0.3);}
+.ai-gen-btn{position:absolute;bottom:8px;right:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:5px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.9rem;transition:all 0.2s;}
+.ai-gen-btn:hover{transform:scale(1.1);}
+.ai-gen-btn.loading{animation:spin 1s linear infinite;background:var(--black4);border:1px solid var(--gold);}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.overlay-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px;}
+.ov-btn{background:var(--black4);border:1px solid var(--border);border-radius:7px;padding:6px 3px;cursor:pointer;text-align:center;font-size:1.1rem;transition:all 0.15s;}
+.ov-btn:hover{border-color:var(--gold);transform:scale(1.05);}
+.ov-btn.active{border-color:var(--gold);background:rgba(201,168,76,0.12);}
+.ov-btn span{display:block;font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:1px;color:var(--muted);margin-top:2px;}
+
+.filter-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
+.cf-btn{padding:5px 8px;border-radius:5px;border:1px solid var(--border);font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:1px;cursor:pointer;color:var(--muted);background:var(--black4);transition:all 0.15s;}
+.cf-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.1);}
+
+.slider-row{display:flex;align-items:center;gap:7px;margin-top:7px;}
+.slider-row label{margin:0;width:82px;flex-shrink:0;}
+.slider-row input{flex:1;}
+.slider-row span{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);width:30px;text-align:right;flex-shrink:0;}
+
+/* Drop zone */
+.drop-zone{border:2px dashed var(--border2);border-radius:10px;padding:22px 14px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;background:var(--black4);}
+.drop-zone:hover,.drop-zone.over{border-color:var(--gold);background:rgba(201,168,76,0.04);}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.dz-icon{font-size:1.8rem;margin-bottom:5px;}
+.dz-text{font-family:'Bebas Neue',sans-serif;font-size:0.82rem;letter-spacing:2px;color:var(--muted);}
+.dz-sub{font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--muted);opacity:0.55;margin-top:3px;}
+.face-preview{width:100%;border-radius:7px;border:1px solid var(--border);margin-top:9px;display:none;position:relative;}
+.face-preview img{width:100%;border-radius:7px;display:block;max-height:100px;object-fit:cover;}
+.face-clear{position:absolute;top:5px;right:5px;background:rgba(0,0,0,0.8);border:1px solid var(--border);border-radius:50%;color:var(--text);width:20px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.62rem;}
+.face-clear:hover{border-color:var(--red);color:var(--red);}
+
+/* AI SUGGEST overlay btn */
+.ai-suggest-btn{width:100%;margin-top:8px;padding:8px;border-radius:6px;border:1px solid rgba(201,168,76,0.4);background:rgba(201,168,76,0.06);color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:0.82rem;letter-spacing:2px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.ai-suggest-btn:hover{background:rgba(201,168,76,0.12);border-color:var(--gold);}
+
+/* ── CANVAS CENTER ── */
+.canvas-area{display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 40%,#1a1510 0%,var(--black) 70%);padding:32px 20px;position:relative;}
+.canvas-area::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(201,168,76,0.012) 40px,rgba(201,168,76,0.012) 41px);pointer-events:none;}
+canvas#preview{border-radius:14px;box-shadow:0 0 80px rgba(201,168,76,0.12),0 40px 80px rgba(0,0,0,0.9);position:relative;z-index:1;transition:box-shadow 0.3s;}
+canvas#preview:hover{box-shadow:0 0 120px rgba(201,168,76,0.2),0 40px 80px rgba(0,0,0,0.9);}
+canvas#exportCanvas{display:none;}
+.canvas-note{font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--muted);letter-spacing:2px;margin-top:12px;text-transform:uppercase;}
+
+/* Watermark indicator */
+.watermark-note{background:rgba(204,34,0,0.1);border:1px solid rgba(204,34,0,0.3);border-radius:5px;padding:6px 12px;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--red);letter-spacing:1px;margin-top:8px;text-align:center;}
+.watermark-note.hidden{display:none;}
+
+/* AI Pack generator */
+.pack-prompt{display:flex;gap:6px;margin-top:8px;}
+.pack-prompt input{flex:1;}
+.pack-gen-btn{background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:6px;padding:8px 12px;font-family:'Bebas Neue',sans-serif;font-size:0.8rem;letter-spacing:1px;color:#000;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
+.pack-gen-btn:hover{opacity:0.88;}
+.pack-results{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;}
+.pack-item{background:var(--black4);border:1px solid var(--border);border-radius:6px;padding:8px;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);transition:all 0.15s;line-height:1.4;}
+.pack-item:hover{border-color:var(--gold);color:var(--text);}
+
+/* ── RIGHT PANEL ── */
+.right-panel{background:var(--black2);border-left:1px solid var(--border);padding:20px;overflow-y:auto;max-height:80vh;}
+
+.btn{display:block;width:100%;padding:12px 14px;border-radius:8px;border:none;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:3px;transition:all 0.2s;margin-top:9px;text-align:center;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;box-shadow:0 4px 20px rgba(201,168,76,0.25);}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(201,168,76,0.35);}
+.btn-premium{background:linear-gradient(135deg,#1a0a00,var(--red));color:white;border:1px solid var(--red);box-shadow:0 4px 20px rgba(204,34,0,0.25);}
+.btn-premium:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(204,34,0,0.35);}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--muted);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.btn-share{background:linear-gradient(135deg,#0a1a0a,#1a3a1a);border:1px solid #2a5a2a;color:#4aff7a;}
+.btn-share:hover{border-color:#4aff7a;}
+.btn:disabled{opacity:0.45;cursor:not-allowed;transform:none;}
+
+.preset-list{display:flex;flex-direction:column;gap:7px;margin-top:8px;}
+.p-item{display:flex;align-items:center;gap:8px;background:var(--black4);border:1px solid var(--border);border-radius:8px;padding:7px;cursor:pointer;transition:all 0.15s;}
+.p-item:hover{border-color:var(--gold);}
+.p-info{flex:1;min-width:0;}
+.p-name{font-family:'Bebas Neue',sans-serif;font-size:0.82rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.p-src{font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--muted);}
+.dl-btn{background:var(--black3);border:1px solid var(--border2);border-radius:4px;padding:5px 7px;font-family:'Bebas Neue',sans-serif;font-size:0.68rem;letter-spacing:1px;color:var(--muted);cursor:pointer;flex-shrink:0;transition:all 0.15s;}
+.dl-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* PREMIUM UPSELL CARD */
+.upsell-card{background:linear-gradient(135deg,#1a0a00,#100a00);border:1px solid var(--gold);border-radius:12px;padding:18px;margin-top:16px;position:relative;overflow:hidden;}
+.upsell-card::before{content:'⚡ PRO';position:absolute;top:10px;right:12px;font-family:'Bebas Neue',sans-serif;font-size:0.7rem;letter-spacing:2px;color:var(--gold);opacity:0.5;}
+.upsell-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;color:var(--gold);}
+.upsell-price{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);margin-top:4px;}
+.upsell-price strong{color:var(--gold2);font-size:1.1rem;}
+.upsell-features{margin-top:10px;display:flex;flex-direction:column;gap:5px;}
+.upsell-feat{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);display:flex;align-items:center;gap:7px;}
+.upsell-feat::before{content:'✓';color:var(--gold);font-weight:bold;flex-shrink:0;}
+
+/* LEAD CAPTURE MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.modal-overlay.active{opacity:1;pointer-events:all;}
+.modal{background:var(--black2);border:1px solid var(--border2);border-top:3px solid var(--gold);border-radius:16px;padding:36px 32px;max-width:420px;width:90%;position:relative;transform:translateY(20px);transition:transform 0.3s;}
+.modal-overlay.active .modal{transform:translateY(0);}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;transition:color 0.2s;}
+.modal-close:hover{color:var(--text);}
+.modal-icon{font-size:2.5rem;text-align:center;margin-bottom:12px;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;color:var(--gold);text-align:center;}
+.modal-sub{font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted);text-align:center;margin-top:6px;line-height:1.7;letter-spacing:1px;}
+.modal-form{margin-top:20px;display:flex;flex-direction:column;gap:10px;}
+.modal-input{background:var(--black4);border:1px solid var(--border2);border-radius:8px;color:var(--text);padding:12px 14px;font-family:'DM Mono',monospace;font-size:0.82rem;outline:none;transition:border-color 0.2s;width:100%;}
+.modal-input:focus{border-color:var(--gold);}
+.modal-submit{width:100%;padding:14px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px;transition:all 0.2s;margin-top:4px;}
+.modal-submit:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(201,168,76,0.4);}
+.modal-disclaimer{font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--muted2);text-align:center;margin-top:10px;line-height:1.6;}
+
+/* PREMIUM MODAL */
+.stripe-section{margin-top:18px;}
+.stripe-card-el{background:var(--black4);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin-top:8px;}
+.stripe-submit{width:100%;padding:14px;border-radius:8px;border:none;cursor:pointer;background:var(--stripe);color:white;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px;transition:all 0.2s;margin-top:12px;}
+.stripe-submit:hover{opacity:0.88;transform:translateY(-2px);}
+.or-divider{text-align:center;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);margin:12px 0;position:relative;}
+.or-divider::before,.or-divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--border);}
+.or-divider::before{left:0;} .or-divider::after{right:0;}
+.plan-toggle{display:flex;gap:8px;margin-top:10px;}
+.plan-opt{flex:1;padding:12px 8px;border-radius:8px;border:1px solid var(--border2);background:var(--black4);cursor:pointer;text-align:center;transition:all 0.2s;}
+.plan-opt.selected{border-color:var(--gold);background:rgba(201,168,76,0.08);}
+.plan-price{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);}
+.plan-label{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:1px;}
+.plan-save{font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--green);margin-top:2px;}
+
+/* SHARE MODAL */
+.share-preview-wrap{text-align:center;margin:16px 0;}
+.share-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+.share-btn{padding:12px;border-radius:8px;border:none;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:2px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.share-btn:hover{transform:translateY(-1px);}
+.share-twitter{background:#000;border:1px solid #333;color:white;}
+.share-copy{background:var(--black4);border:1px solid var(--border2);color:var(--text);}
+.share-copy.copied{border-color:var(--green);color:var(--green);}
+.zorro-tag{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);text-align:center;margin-top:10px;line-height:1.7;}
+
+/* PREMIUM LOCKED OVERLAY */
+.pro-lock{display:none;position:absolute;inset:0;background:rgba(8,8,8,0.7);border-radius:6px;align-items:center;justify-content:center;flex-direction:column;gap:4px;cursor:pointer;backdrop-filter:blur(2px);}
+.pro-lock-wrap{position:relative;}
+.pro-lock-wrap:hover .pro-lock{display:flex;}
+.lock-icon{font-size:1.4rem;}
+.lock-text{font-family:'Bebas Neue',sans-serif;font-size:0.7rem;letter-spacing:2px;color:var(--gold);}
+
+/* STATUS STATES */
+.ai-status{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--gold);margin-top:6px;min-height:16px;letter-spacing:1px;display:flex;align-items:center;gap:6px;}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 1s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* FOOTER */
+footer{background:var(--black2);border-top:1px solid var(--border);padding:24px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer-brand{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px;color:var(--gold);}
+.footer-brand span{color:var(--red);}
+.footer-links{display:flex;gap:20px;}
+.footer-link{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:1px;text-decoration:none;transition:color 0.2s;}
+.footer-link:hover{color:var(--gold);}
+.footer-copy{font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--muted2);letter-spacing:1px;}
+
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="https://zorronation.com" class="nav-logo">ZORRO<span>NATION</span></a>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="nav-badge">AI STICKER STUDIO</div>
+  </div>
+  <button class="nav-premium-btn" id="navUpgradeBtn" onclick="openPremiumModal()">⚡ GO PRO</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Zorronation AI Products · v1.0</div>
+  <h1>
+    AI STICKER<br>
+    <span class="accent">STUDIO</span>
+  </h1>
+  <p class="hero-sub">Generate gangster-themed Slack stickers powered by AI. Drop a face, pick a vibe, let the AI do the rest.</p>
+  <div class="hero-pills">
+    <div class="pill"><span class="pill-dot"></span>AI Quote Generator</div>
+    <div class="pill"><span class="pill-dot gold"></span>Face Mode</div>
+    <div class="pill"><span class="pill-dot red"></span>8 Franchises</div>
+  </div>
+</section>
+
+<!-- FREE COUNTER -->
+<div class="free-counter" id="freeCounter">
+  <span id="counterText">FREE DOWNLOADS: <strong id="leftCount">3</strong> / 3 REMAINING TODAY</span>
+  <div class="counter-bar"><div class="counter-fill" id="counterFill" style="width:100%"></div></div>
+  <span style="cursor:pointer;color:var(--gold);" onclick="openPremiumModal()">→ GO UNLIMITED</span>
+</div>
+
+<!-- APP -->
+<div class="app-shell">
+
+  <!-- ═══ LEFT SIDEBAR ═══ -->
+  <div class="sidebar">
+    <div class="mode-tabs">
+      <button class="m-tab active" onclick="switchMode('classic')">🎬 QUOTE</button>
+      <button class="m-tab" onclick="switchMode('face')">🤵 FACE</button>
+      <button class="m-tab" onclick="switchMode('pack')">📦 PACK</button>
+    </div>
+
+    <!-- CLASSIC MODE -->
+    <div id="classicPanel" class="mode-panel active">
+      <div class="s-title">FRANCHISE</div>
+      <div class="franchise-grid" id="franchiseGrid"></div>
+
+      <div class="s-title">QUOTES</div>
+      <div class="quote-list" id="quoteList"></div>
+
+      <div class="s-title"><span>AI QUOTE WRITER</span><span class="ai-badge">AI</span></div>
+      <div class="ai-prompt-wrap">
+        <textarea id="aiPromptText" placeholder="Describe the vibe... e.g. 'hype speech from a mob boss'" rows="2"></textarea>
+        <button class="ai-gen-btn" id="aiGenBtn" onclick="aiGenerateQuote()" title="Generate with AI">✦</button>
+      </div>
+      <div class="ai-status" id="aiStatus"></div>
+
+      <label>Main Text</label>
+      <textarea id="mainText" rows="2" oninput="render()">SAY HELLO TO MY LITTLE FRIEND</textarea>
+      <label>Sub Tag</label>
+      <input type="text" id="subText" value="SCARFACE" oninput="render()">
+
+      <div class="s-title">STYLE</div>
+      <label>Theme</label>
+      <select id="theme" onchange="render()">
+        <option value="mob">Mob Gold</option><option value="crime">Crime Red</option>
+        <option value="wire">The Wire Dark</option><option value="cartel">Cartel Desert</option>
+        <option value="soprano">Soprano Marble</option><option value="heist">Heist Neon</option>
+      </select>
+      <label>Shape</label>
+      <select id="shape" onchange="render()">
+        <option value="circle">Circle</option><option value="rounded">Rounded Square</option>
+        <option value="shield">Badge / Shield</option><option value="diamond">Diamond</option><option value="hex">Hexagon</option>
+      </select>
+      <label>Font</label>
+      <select id="font" onchange="render()">
+        <option value="Anton">Anton — Impact</option><option value="Bebas Neue">Bebas — Cinematic</option>
+        <option value="Playfair Display">Playfair — Classic</option><option value="Permanent Marker">Marker — Street</option>
+        <option value="Teko">Teko — Modern</option><option value="Oswald">Oswald — Gritty</option>
+      </select>
+      <label>Emoji</label>
+      <div class="emoji-grid" id="emojiPicker"></div>
+      <label>Text Size: <span id="tsVal">16</span>px</label>
+      <input type="range" id="textSize" min="8" max="28" value="16" oninput="document.getElementById('tsVal').textContent=this.value;render()">
+      <label>Layout</label>
+      <select id="layout" onchange="render()">
+        <option value="bottom">Emoji Top · Text Bottom</option><option value="top">Text Top · Emoji Bottom</option>
+        <option value="center">Emoji Only</option><option value="textonly">Text Only</option><option value="stack">Stacked</option>
+      </select>
+    </div>
+
+    <!-- FACE MODE -->
+    <div id="facePanel" class="mode-panel">
+      <div class="s-title">UPLOAD FACE</div>
+      <div class="drop-zone" id="dropZone">
+        <div class="dz-icon">🤵</div>
+        <div class="dz-text">DROP PHOTO HERE</div>
+        <div class="dz-sub">JPG / PNG / WEBP</div>
+        <input type="file" id="faceUpload" accept="image/*" onchange="handleFaceUpload(event)">
+      </div>
+      <div class="face-preview" id="facePreviewBox">
+        <img id="faceThumb" src="" alt="">
+        <div class="face-clear" onclick="clearFace()">✕</div>
+      </div>
+
+      <div class="s-title"><span>OVERLAYS</span><span class="ai-badge">AI</span></div>
+      <button class="ai-suggest-btn" id="aiSuggestBtn" onclick="aiSuggestOverlays()">✦ AI SUGGEST OVERLAYS</button>
+      <div class="ai-status" id="aiOverlayStatus"></div>
+      <div class="overlay-grid" id="overlayGrid"></div>
+
+      <div class="s-title">ADJUST</div>
+      <div class="slider-row">
+        <label>Face Scale</label>
+        <input type="range" id="faceScale" min="40" max="130" value="82" oninput="this.nextElementSibling.textContent=this.value+'%';render()">
+        <span>82%</span>
+      </div>
+      <div class="slider-row">
+        <label>Up / Down</label>
+        <input type="range" id="faceOffsetY" min="-60" max="60" value="-8" oninput="this.nextElementSibling.textContent=this.value;render()">
+        <span>-8</span>
+      </div>
+      <div class="slider-row">
+        <label>Left / Right</label>
+        <input type="range" id="faceOffsetX" min="-60" max="60" value="0" oninput="this.nextElementSibling.textContent=this.value;render()">
+        <span>0</span>
+      </div>
+      <label>Filter</label>
+      <div class="filter-row" id="filterRow"></div>
+      <label>Opacity: <span id="opVal">100</span>%</label>
+      <input type="range" id="faceOpacity" min="30" max="100" value="100" oninput="document.getElementById('opVal').textContent=this.value;render()">
+      <label>Caption Top</label>
+      <input type="text" id="faceTopText" placeholder="WHEN THEY SAY..." oninput="render()">
+      <label>Caption Bottom</label>
+      <input type="text" id="faceBotText" value="THE BOSS" oninput="render()">
+      <label>Shape</label>
+      <select id="faceShape" onchange="render()">
+        <option value="circle">Circle</option><option value="rounded">Rounded Square</option>
+        <option value="shield">Shield</option><option value="hex">Hexagon</option><option value="diamond">Diamond</option>
+      </select>
+      <label>Background</label>
+      <select id="faceBgTheme" onchange="render()">
+        <option value="mob">Mob Gold</option><option value="crime">Crime Red</option>
+        <option value="wire">The Wire Dark</option><option value="cartel">Cartel Desert</option>
+        <option value="soprano">Soprano Marble</option><option value="heist">Heist Neon</option>
+      </select>
+    </div>
+
+    <!-- PACK MODE (PRO) -->
+    <div id="packPanel" class="mode-panel">
+      <div class="s-title"><span>AI PACK GENERATOR</span><span class="pro-badge">PRO</span></div>
+      <p style="font-family:'DM Mono',monospace;font-size:0.64rem;color:var(--muted);line-height:1.7;margin-bottom:10px;">Describe a theme and AI generates 8 quotes instantly.</p>
+      <div class="pack-prompt">
+        <input type="text" id="packPromptText" placeholder="e.g. 'mob boss Monday motivation'">
+        <button class="pack-gen-btn" onclick="aiGeneratePack()">✦ GEN</button>
+      </div>
+      <div class="ai-status" id="aiPackStatus"></div>
+      <div class="pack-results" id="packResults"></div>
+      <div id="packProLock" style="margin-top:12px;display:none;">
+        <div style="background:rgba(204,34,0,0.08);border:1px solid rgba(204,34,0,0.3);border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:1.5rem;margin-bottom:6px;">🔒</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:2px;color:var(--red);">PRO FEATURE</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);margin-top:5px;line-height:1.6;">Upgrade to generate unlimited themed sticker packs with AI</div>
+          <button class="btn btn-premium" style="margin-top:10px;padding:9px;" onclick="openPremiumModal()">UNLOCK PRO →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ CENTER ═══ -->
+  <div class="canvas-area">
+    <canvas id="preview" width="320" height="320" style="width:320px;height:320px;"></canvas>
+    <canvas id="exportCanvas" width="128" height="128"></canvas>
+    <div class="canvas-note">Live preview · 128×128 PNG download</div>
+    <div class="watermark-note" id="watermarkNote">FREE VERSION — ZORRONATION WATERMARK ADDED · <span style="cursor:pointer;text-decoration:underline;" onclick="openPremiumModal()">REMOVE WITH PRO</span></div>
+  </div>
+
+  <!-- ═══ RIGHT PANEL ═══ -->
+  <div class="right-panel">
+    <div class="s-title">EXPORT</div>
+    <button class="btn btn-gold" onclick="handleDownload()">⬇ DOWNLOAD STICKER</button>
+    <button class="btn btn-share" onclick="openShareModal()">↗ SHARE TO GROW</button>
+    <button class="btn btn-outline" onclick="randomize()">🎲 RANDOMIZE</button>
+
+    <!-- UPSELL CARD -->
+    <div class="upsell-card" id="upsellCard">
+      <div class="upsell-title">UNLOCK PRO</div>
+      <div class="upsell-price">Only <strong>$9.99</strong>/mo or <strong>$49</strong> once</div>
+      <div class="upsell-features">
+        <div class="upsell-feat">No watermark on downloads</div>
+        <div class="upsell-feat">Unlimited daily downloads</div>
+        <div class="upsell-feat">AI Pack Generator (8 quotes)</div>
+        <div class="upsell-feat">AI auto-style face photos</div>
+        <div class="upsell-feat">Priority AI generation</div>
+        <div class="upsell-feat">All future franchise packs</div>
+      </div>
+      <button class="btn btn-premium" style="margin-top:14px;" onclick="openPremiumModal()">⚡ GET PRO NOW</button>
+    </div>
+
+    <div class="s-title" style="margin-top:20px;">QUICK PRESETS</div>
+    <div class="preset-list" id="presetList"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">ZORRO<span>NATION</span> AI STUDIO</div>
+    <div class="footer-copy" style="margin-top:4px;">© 2025 Zorro Markets LLC · All rights reserved</div>
+  </div>
+  <div class="footer-links">
+    <a href="https://zorronation.com" class="footer-link">HOME</a>
+    <a href="https://zorronation.com/ai-products" class="footer-link">AI PRODUCTS</a>
+    <a href="/cdn-cgi/l/email-protection#a5cdc0c9c9cae5dfcad7d7cacbc4d1cccacb8bc6cac8" class="footer-link">CONTACT</a>
+  </div>
+  <div class="footer-copy">Powered by Zorronation AI · Built by Zorro Markets LLC</div>
+</footer>
+
+<!-- ═══════════ LEAD CAPTURE MODAL ═══════════ -->
+<div class="modal-overlay" id="leadModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('leadModal')">✕</button>
+    <div class="modal-icon">🔫</div>
+    <div class="modal-title">GET YOUR STICKER</div>
+    <div class="modal-sub">Drop your info and we'll send it straight to you.<br>No spam. Just drip.</div>
+    <div class="modal-form">
+      <input class="modal-input" type="text" id="leadName" placeholder="YOUR NAME" autocomplete="name">
+      <input class="modal-input" type="email" id="leadEmail" placeholder="YOUR EMAIL" autocomplete="email">
+      <button class="modal-submit" onclick="submitLead()">DOWNLOAD FREE STICKER →</button>
+    </div>
+    <div class="modal-disclaimer">By submitting you agree to receive occasional updates from Zorronation. Unsubscribe anytime.</div>
+  </div>
+</div>
+
+<!-- ═══════════ PREMIUM MODAL ═══════════ -->
+<div class="modal-overlay" id="premiumModal">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="closeModal('premiumModal')">✕</button>
+    <div class="modal-icon">⚡</div>
+    <div class="modal-title">GO PRO — ZORRONATION</div>
+    <div class="modal-sub">Remove watermarks · Unlimited downloads<br>AI Pack Generator · All features unlocked</div>
+
+    <div class="plan-toggle" style="margin-top:16px;">
+      <div class="plan-opt selected" id="planMonthly" onclick="selectPlan('monthly')">
+        <div class="plan-price">$9.99</div>
+        <div class="plan-label">PER MONTH</div>
+      </div>
+      <div class="plan-opt" id="planLifetime" onclick="selectPlan('lifetime')">
+        <div class="plan-price">$49</div>
+        <div class="plan-label">ONE TIME</div>
+        <div class="plan-save">BEST VALUE ✓</div>
+      </div>
+    </div>
+
+    <div class="stripe-section">
+      <label style="margin-top:14px;">CARD DETAILS</label>
+      <div class="stripe-card-el" id="stripeCardElement">
+        <!-- Stripe Elements mounts here -->
+        <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);padding:4px 0;">
+          🔒 Stripe secure checkout · Replace this with real Stripe Elements in production
+        </div>
+      </div>
+      <input class="modal-input" type="email" id="premiumEmail" placeholder="EMAIL FOR RECEIPT" style="margin-top:8px;">
+      <button class="stripe-submit" onclick="handleStripePayment()">⚡ UNLOCK PRO NOW</button>
+    </div>
+
+    <div class="or-divider">or continue free</div>
+    <button class="btn btn-outline" onclick="closeModal('premiumModal')" style="margin-top:0;">STAY FREE (3 DOWNLOADS/DAY)</button>
+
+    <div class="modal-disclaimer" style="margin-top:12px;">Payments processed by Stripe. Cancel anytime. Zorro Markets LLC.</div>
+  </div>
+</div>
+
+<!-- ═══════════ SHARE MODAL ═══════════ -->
+<div class="modal-overlay" id="shareModal">
+  <div class="modal" style="max-width:400px;">
+    <button class="modal-close" onclick="closeModal('shareModal')">✕</button>
+    <div class="modal-title">SHARE THE DRIP</div>
+    <div class="modal-sub">Help grow Zorronation — share your sticker.</div>
+    <div class="share-preview-wrap">
+      <canvas id="shareCanvas" width="160" height="160" style="width:160px;height:160px;border-radius:10px;box-shadow:0 0 30px rgba(201,168,76,0.2);"></canvas>
+    </div>
+    <div class="share-actions">
+      <button class="share-btn share-twitter" onclick="shareToTwitter()">𝕏 &nbsp;SHARE ON X / TWITTER</button>
+      <button class="share-btn share-copy" id="copyLinkBtn" onclick="copyShareLink()">🔗 &nbsp;COPY SHARE LINK</button>
+    </div>
+    <div class="zorro-tag">Made with <strong style="color:var(--gold);">Zorronation AI Studio</strong><br>zorronation.com/ai-products</div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ══════════════════════════════════════════════════════
+//  CONFIGURATION
+//  → Replace the 3 values marked REPLACE before launch
+// ══════════════════════════════════════════════════════
+const CONFIG = {
+  // ① Paste your Cloudflare Worker URL here after deploying
+  aiProxyUrl: 'https://zorronation-ai-proxy.YOUR-SUBDOMAIN.workers.dev/claude',
+
+  // ② Stripe — get from dashboard.stripe.com
+  stripePublishableKey: 'pk_live_REPLACE_WITH_YOUR_STRIPE_KEY',
+  monthlyPaymentLink:   'https://buy.stripe.com/REPLACE_MONTHLY_LINK',
+  lifetimePaymentLink:  'https://buy.stripe.com/REPLACE_LIFETIME_LINK',
+
+  // ③ GoHighLevel webhook URL
+  ghlWebhookUrl: 'https://services.leadconnectorhq.com/hooks/REPLACE_YOUR_HOOK_ID/webhook-trigger/REPLACE',
+
+  siteUrl: 'https://zorronation.com/ai-products/sticker-studio',
+};
+
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+const STATE = {
+  mode: 'classic',
+  isPro: false,
+  freeDownloadsLeft: 3,
+  leadCaptured: false,
+  currentEmoji: '🔫',
+  activeFranchise: 'Scarface',
+  activeQuoteIdx: 0,
+  faceImage: null,
+  activeOverlays: new Set(),
+  activeFilter: 'none',
+  selectedPlan: 'monthly',
+};
+
+// ══════════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════════
+const FRANCHISES = {
+  "Scarface":     {emoji:"🔫",quotes:["SAY HELLO TO MY LITTLE FRIEND","THE WORLD IS YOURS","MAKE WAY FOR THE BAD GUY","EVERY DAY ABOVE GROUND IS A GOOD DAY","WHO DO I TRUST? ME, THAT'S WHO"]},
+  "Godfather":    {emoji:"🌹",quotes:["I'M GONNA MAKE HIM AN OFFER HE CAN'T REFUSE","LEAVE THE GUN. TAKE THE CANNOLI.","JUST WHEN I THOUGHT I WAS OUT...","IT'S NOT PERSONAL. IT'S STRICTLY BUSINESS.","NEVER HATE YOUR ENEMIES."]},
+  "Sopranos":     {emoji:"🍝",quotes:["YOU'RE BREAKIN' MY BALLS HERE","GABAGOOL","FORGET ABOUT IT","ENOUGH WITH THE DRAMA","WOKE UP THIS MORNING, GOT YOURSELF A GUN"]},
+  "Breaking Bad": {emoji:"🧪",quotes:["I AM THE ONE WHO KNOCKS","SAY MY NAME","I AM THE DANGER","YO MR. WHITE!","WE'RE DONE COOKING"]},
+  "The Wire":     {emoji:"📡",quotes:["ALL IN THE GAME","A MAN'S GOTTA HAVE A CODE","YOU COME AT THE KING YOU BEST NOT MISS","SHEEEEIT","OMAR COMING"]},
+  "Goodfellas":   {emoji:"💎",quotes:["FUNNY HOW? LIKE I'M A CLOWN?","F*** YOU PAY ME","NEVER RAT ON YOUR FRIENDS","GO HOME AND GET YOUR SHINEBOX","ALWAYS WANTED TO BE A GANGSTER"]},
+  "Narcos":       {emoji:"🌿",quotes:["PLATA O PLOMO","ONLY GOD CAN JUDGE ME","EVERYONE HAS A PRICE","BUSINESS IS BUSINESS","PABLO DOESN'T LOSE"]},
+  "Training Day": {emoji:"🏙️",quotes:["KING KONG AIN'T GOT NOTHING ON ME","IT'S NOT WHAT YOU KNOW — IT'S WHAT YOU CAN PROVE","THIS IS MY CITY","THAT'S HOW THIS GAME IS PLAYED","TODAY WAS A GOOD DAY"]},
+};
+const EMOJIS=["🔫","🌹","🍝","🧪","📡","💎","🌿","🏙️","🤵","💰","🔪","🥃","🚬","🎰","💣","👑","🦅","🎯","🕺️","🧨"];
+const THEMES={
+  mob:    {bg1:"#1a1200",bg2:"#0a0800",text:"#f0d060",sub:"#c9a84c",border:"#c9a84c",glow:"#c9a84c",accent:"#8b6914"},
+  crime:  {bg1:"#1a0000",bg2:"#0a0000",text:"#ffffff",sub:"#ff4444",border:"#cc2200",glow:"#cc2200",accent:"#660000"},
+  wire:   {bg1:"#0a0e12",bg2:"#050508",text:"#9eb8d0",sub:"#4a7090",border:"#2a5070",glow:"#4488bb",accent:"#1a3040"},
+  cartel: {bg1:"#1e1205",bg2:"#100900",text:"#e8c46a",sub:"#b07030",border:"#c08030",glow:"#d0902a",accent:"#6a3a10"},
+  soprano:{bg1:"#1a1a1a",bg2:"#080808",text:"#e8e0d0",sub:"#aaa090",border:"#888070",glow:"#c0b090",accent:"#444030"},
+  heist:  {bg1:"#001a10",bg2:"#000a08",text:"#00ff88",sub:"#00aa55",border:"#00cc66",glow:"#00ff88",accent:"#004422"},
+};
+const OVERLAYS=[
+  {id:"fedora",label:"Fedora",emoji:"🎩"},{id:"shades",label:"Shades",emoji:"🕺️"},
+  {id:"chain",label:"Chain",emoji:"⛓️"},{id:"cigar",label:"Cigar",emoji:"🚬"},
+  {id:"money",label:"$Rain",emoji:"💵"},{id:"crown",label:"Crown",emoji:"👑"},
+  {id:"tattoo",label:"Tattoo",emoji:"🔱"},{id:"gun",label:"Piece",emoji:"🔫"},
+  {id:"rose",label:"Rose",emoji:"🥀"},{id:"100",label:"100",emoji:"💯"},
+  {id:"smoke",label:"Smoke",emoji:"💨"},{id:"scar",label:"Scar",emoji:"⚡"},
+];
+const FILTERS=[{id:"none",label:"None"},{id:"bw",label:"B&W"},{id:"sepia",label:"Sepia"},{id:"contrast",label:"Hi-Con"},{id:"neon",label:"Neon"},{id:"noir",label:"Noir"}];
+const CLASSIC_PRESETS=[
+  {main:"SAY HELLO TO MY LITTLE FRIEND",sub:"SCARFACE",emoji:"🔫",theme:"crime",shape:"circle",font:"Anton"},
+  {main:"I AM THE ONE WHO KNOCKS",sub:"BREAKING BAD",emoji:"🧪",theme:"wire",shape:"rounded",font:"Bebas Neue"},
+  {main:"FORGET ABOUT IT",sub:"SOPRANOS",emoji:"🍝",theme:"soprano",shape:"hex",font:"Anton"},
+  {main:"PLATA O PLOMO",sub:"NARCOS",emoji:"🌿",theme:"cartel",shape:"diamond",font:"Oswald"},
+  {main:"OMAR COMING",sub:"THE WIRE",emoji:"📡",theme:"wire",shape:"shield",font:"Anton"},
+  {main:"F*** YOU PAY ME",sub:"GOODFELLAS",emoji:"💎",theme:"mob",shape:"circle",font:"Permanent Marker"},
+  {main:"SAY MY NAME",sub:"HEISENBERG",emoji:"👑",theme:"heist",shape:"rounded",font:"Anton"},
+  {main:"IT'S STRICTLY BUSINESS",sub:"GODFATHER",emoji:"🌹",theme:"soprano",shape:"diamond",font:"Anton"},
+];
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+function init(){
+  buildFranchiseBtns();buildEmojiPicker();buildOverlayGrid();buildFilterRow();buildPresets();
+  loadFranchise('Scarface');setupDragDrop();updateFreeCounter();showPackLock();render();
+}
+
+function showPackLock(){
+  if(!STATE.isPro){
+    document.getElementById('packProLock').style.display='block';
+    document.getElementById('packPromptText').disabled=true;
+    document.querySelector('.pack-gen-btn').disabled=true;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  MODE SWITCHING
+// ══════════════════════════════════════════════════════
+function switchMode(m){
+  STATE.mode=m;
+  document.querySelectorAll('.m-tab').forEach((t,i)=>{
+    t.classList.toggle('active',['classic','face','pack'][i]===m);
+  });
+  document.getElementById('classicPanel').classList.toggle('active',m==='classic');
+  document.getElementById('facePanel').classList.toggle('active',m==='face');
+  document.getElementById('packPanel').classList.toggle('active',m==='pack');
+  render();
+}
+
+// ══════════════════════════════════════════════════════
+//  BUILD UI
+// ══════════════════════════════════════════════════════
+function buildFranchiseBtns(){
+  const g=document.getElementById('franchiseGrid');
+  Object.keys(FRANCHISES).forEach(name=>{
+    const b=document.createElement('button');b.className='f-btn'+(name===STATE.activeFranchise?' active':'');
+    b.textContent=name;b.onclick=()=>loadFranchise(name);g.appendChild(b);
+  });
+}
+function loadFranchise(name){
+  STATE.activeFranchise=name;STATE.currentEmoji=FRANCHISES[name].emoji;
+  document.querySelectorAll('.f-btn').forEach(b=>b.classList.toggle('active',b.textContent===name));
+  buildQuoteList();selectQuote(0);
+}
+function buildQuoteList(){
+  const list=document.getElementById('quoteList');list.innerHTML='';
+  FRANCHISES[STATE.activeFranchise].quotes.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='q-pill'+(i===STATE.activeQuoteIdx?' active':'');
+    d.textContent='"'+q+'"';d.onclick=()=>selectQuote(i);list.appendChild(d);
+  });
+}
+function selectQuote(i){
+  STATE.activeQuoteIdx=i;
+  document.querySelectorAll('.q-pill').forEach((el,j)=>el.classList.toggle('active',j===i));
+  document.getElementById('mainText').value=FRANCHISES[STATE.activeFranchise].quotes[i];
+  document.getElementById('subText').value=STATE.activeFranchise.toUpperCase();render();
+}
+function buildEmojiPicker(){
+  const p=document.getElementById('emojiPicker');
+  EMOJIS.forEach(em=>{
+    const b=document.createElement('button');
+    b.className='e-btn';b.textContent=em;b.onclick=()=>{STATE.currentEmoji=em;render();};p.appendChild(b);
+  });
+}
+function buildOverlayGrid(){
+  const g=document.getElementById('overlayGrid');
+  OVERLAYS.forEach(ov=>{
+    const b=document.createElement('div');b.className='ov-btn';b.id='ov_'+ov.id;
+    b.innerHTML=`${ov.emoji}<span>${ov.label}</span>`;
+    b.onclick=()=>{
+      if(STATE.activeOverlays.has(ov.id)){STATE.activeOverlays.delete(ov.id);b.classList.remove('active');}
+      else{STATE.activeOverlays.add(ov.id);b.classList.add('active');}render();
+    };g.appendChild(b);
+  });
+}
+function buildFilterRow(){
+  const r=document.getElementById('filterRow');
+  FILTERS.forEach(f=>{
+    const b=document.createElement('button');b.className='cf-btn'+(f.id==='none'?' active':'');
+    b.textContent=f.label;
+    b.onclick=()=>{STATE.activeFilter=f.id;document.querySelectorAll('.cf-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');render();};
+    r.appendChild(b);
+  });
+}
+function buildPresets(){
+  const list=document.getElementById('presetList');
+  CLASSIC_PRESETS.forEach(p=>{
+    const item=document.createElement('div');item.className='p-item';item.onclick=()=>loadPreset(p);
+    const c=document.createElement('canvas');c.width=52;c.height=52;c.style.cssText='width:52px;height:52px;border-radius:5px;flex-shrink:0;';
+    drawClassicSticker(c,{...p,textSize:15,emojiSize:40,layout:'bottom'},52);
+    const info=document.createElement('div');info.className='p-info';
+    info.innerHTML=`<div class="p-name">${p.emoji} ${p.main.substring(0,15)}…</div><div class="p-src">${p.sub}</div>`;
+    const dl=document.createElement('button');dl.className='dl-btn';dl.textContent='↓';
+    dl.onclick=e=>{e.stopPropagation();handlePresetDownload(p);};
+    item.appendChild(c);item.appendChild(info);item.appendChild(dl);list.appendChild(item);
+  });
+}
+function loadPreset(p){
+  STATE.currentEmoji=p.emoji;document.getElementById('mainText').value=p.main;document.getElementById('subText').value=p.sub;
+  document.getElementById('theme').value=p.theme;document.getElementById('shape').value=p.shape;document.getElementById('font').value=p.font;render();
+}
+
+// ══════════════════════════════════════════════════════
+//  DRAG & DROP
+// ══════════════════════════════════════════════════════
+function setupDragDrop(){
+  const dz=document.getElementById('dropZone');
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))loadFaceFile(f);});
+}
+function handleFaceUpload(e){const f=e.target.files[0];if(f)loadFaceFile(f);}
+function loadFaceFile(file){
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{STATE.faceImage=img;document.getElementById('faceThumb').src=ev.target.result;document.getElementById('facePreviewBox').style.display='block';render();};
+    img.src=ev.target.result;
+  };reader.readAsDataURL(file);
+}
+function clearFace(){STATE.faceImage=null;document.getElementById('faceThumb').src='';document.getElementById('facePreviewBox').style.display='none';document.getElementById('faceUpload').value='';render();}
+
+// ══════════════════════════════════════════════════════
+//  AI FEATURES — Claude API
+// ══════════════════════════════════════════════════════
+// ── Core AI caller — routes through Cloudflare Worker proxy ──
+async function callClaude(feature, prompt) {
+  const response = await fetch(CONFIG.aiProxyUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      feature,               // 'quote' | 'overlay' | 'pack'
+      prompt,
+      plan: STATE.isPro ? 'pro' : 'free',
+    })
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    if (err.upgrade) { openPremiumModal(); throw new Error('upgrade_required'); }
+    throw new Error(err.error || 'AI request failed');
+  }
+  const data = await response.json();
+  return data.result || '';
+}
+
+async function aiGenerateQuote(){
+  const prompt=document.getElementById('aiPromptText').value.trim();
+  if(!prompt)return;
+  const btn=document.getElementById('aiGenBtn');
+  const status=document.getElementById('aiStatus');
+  btn.classList.add('loading');btn.textContent='↻';
+  status.innerHTML='<span class="ai-dot"></span> AI GENERATING...';
+  try{
+    const result = await callClaude('quote', `Write ONE punchy gangster sticker quote (max 6 words, ALL CAPS) based on this vibe: "${prompt}"`);
+    document.getElementById('mainText').value=result.toUpperCase().replace(/['"]/g,'');
+    status.innerHTML='<span style="color:var(--green);">✓ AI QUOTE READY</span>';
+    render();
+  }catch(e){
+    if(e.message!=='upgrade_required') status.innerHTML='<span style="color:var(--red);">✗ ERROR — TRY AGAIN</span>';
+  }
+  btn.classList.remove('loading');btn.textContent='✦';
+  setTimeout(()=>status.innerHTML='',3000);
+}
+
+async function aiSuggestOverlays(){
+  if(!STATE.faceImage){alert('Upload a face first!');return;}
+  const btn=document.getElementById('aiSuggestBtn');
+  const status=document.getElementById('aiOverlayStatus');
+  btn.textContent='✦ ANALYZING...';btn.disabled=true;
+  status.innerHTML='<span class="ai-dot"></span> AI READING THE VIBE...';
+  try{
+    const result = await callClaude('overlay', 'Suggest 3 gangster overlays for a face photo sticker. Pick the boldest, most iconic combination.');
+    const suggested=result.split(',').map(s=>s.trim().toLowerCase()).filter(s=>OVERLAYS.some(o=>o.id===s));
+    STATE.activeOverlays=new Set(suggested.slice(0,3));
+    document.querySelectorAll('.ov-btn').forEach(b=>b.classList.toggle('active',STATE.activeOverlays.has(b.id.replace('ov_',''))));
+    status.innerHTML=`<span style="color:var(--green);">✓ AI CHOSE: ${[...STATE.activeOverlays].join(', ').toUpperCase()}</span>`;
+    render();
+  }catch(e){
+    if(e.message!=='upgrade_required') status.innerHTML='<span style="color:var(--red);">✗ ERROR — TRY AGAIN</span>';
+  }
+  btn.textContent='✦ AI SUGGEST OVERLAYS';btn.disabled=false;
+  setTimeout(()=>status.innerHTML='',4000);
+}
+
+async function aiGeneratePack(){
+  if(!STATE.isPro){openPremiumModal();return;}
+  const prompt=document.getElementById('packPromptText').value.trim();
+  if(!prompt){alert('Enter a theme first!');return;}
+  const status=document.getElementById('aiPackStatus');
+  const results=document.getElementById('packResults');
+  results.innerHTML='';
+  status.innerHTML='<span class="ai-dot"></span> GENERATING 8 QUOTES...';
+  try{
+    const result = await callClaude('pack', `Generate 8 gangster sticker quotes for this theme: "${prompt}"`);
+    const quotes=result.split('\n').map(q=>q.trim().toUpperCase()).filter(q=>q.length>1).slice(0,8);
+    quotes.forEach(q=>{
+      const item=document.createElement('div');item.className='pack-item';
+      item.textContent='"'+q+'"';
+      item.onclick=()=>{document.getElementById('mainText').value=q;switchMode('classic');render();};
+      results.appendChild(item);
+    });
+    status.innerHTML=`<span style="color:var(--green);">✓ ${quotes.length} QUOTES GENERATED</span>`;
+  }catch(e){
+    if(e.message!=='upgrade_required') status.innerHTML='<span style="color:var(--red);">✗ ERROR — TRY AGAIN</span>';
+  }
+  setTimeout(()=>status.innerHTML='',4000);
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════════════
+function render(){
+  const canvas=document.getElementById('preview');
+  if(STATE.mode==='classic')drawClassicSticker(canvas,getClassicCfg(),320);
+  else if(STATE.mode==='face'||STATE.mode==='pack')drawFaceSticker(canvas,320);
+  // Update watermark note
+  document.getElementById('watermarkNote').classList.toggle('hidden',STATE.isPro||STATE.leadCaptured);
+}
+
+function getClassicCfg(){
+  return{main:document.getElementById('mainText').value||'',sub:document.getElementById('subText').value||'',
+    emoji:STATE.currentEmoji,theme:document.getElementById('theme').value,shape:document.getElementById('shape').value,
+    font:document.getElementById('font').value,textSize:parseInt(document.getElementById('textSize').value),
+    emojiSize:44,layout:document.getElementById('layout').value};
+}
+
+// ══════════════════════════════════════════════════════
+//  DRAWING ENGINE
+// ══════════════════════════════════════════════════════
+function drawClassicSticker(canvas,cfg,size){
+  const ctx=canvas.getContext('2d'),W=size,H=size,cx=W/2,cy=H/2,r=W*0.46;
+  const T=THEMES[cfg.theme]||THEMES.mob,scale=W/128;
+  ctx.clearRect(0,0,W,H);
+  ctx.save();clip(ctx,cfg.shape,cx,cy,r,W,H);
+  const g=ctx.createRadialGradient(cx,cy*0.6,0,cx,cy,r*1.3);
+  g.addColorStop(0,T.bg1);g.addColorStop(1,T.bg2);ctx.fillStyle=g;ctx.fill();
+  ctx.strokeStyle=T.accent+'44';ctx.lineWidth=0.5;
+  for(let i=-H;i<W+H;i+=W*0.12){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+H,H);ctx.stroke();}
+  const vig=ctx.createRadialGradient(cx,cy,r*0.3,cx,cy,r*1.1);
+  vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(1,'rgba(0,0,0,0.6)');ctx.fillStyle=vig;ctx.fill();
+  ctx.restore();ctx.save();clip(ctx,cfg.shape,cx,cy,r,W,H);
+  const layout=cfg.layout||'bottom',eSz=(cfg.emojiSize||44)*scale,tSz=(cfg.textSize||16)*scale,fn=cfg.font||'Anton';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  if(layout==='center'){ctx.font=`${eSz*1.4}px serif`;ctx.fillText(cfg.emoji,cx,cy);}
+  else if(layout==='textonly'){wrapText(ctx,cfg.main,cx,cy,W*0.82,tSz,fn,T.text,T.glow);}
+  else if(layout==='top'){wrapText(ctx,cfg.main,cx,cy*0.55,W*0.82,tSz,fn,T.text,T.glow);ctx.font=`${eSz}px serif`;ctx.fillText(cfg.emoji,cx,cy*1.5);}
+  else if(layout==='stack'){ctx.font=`${eSz*0.85}px serif`;ctx.fillText(cfg.emoji,cx,cy*0.52);wrapText(ctx,cfg.main,cx,cy*1.05,W*0.84,tSz*0.9,fn,T.text,T.glow);}
+  else{ctx.font=`${eSz}px serif`;ctx.fillText(cfg.emoji,cx,cy*0.6);wrapText(ctx,cfg.main,cx,cy*1.18,W*0.84,tSz,fn,T.text,T.glow);}
+  if(cfg.sub&&layout!=='center'){ctx.font=`bold ${tSz*0.5}px DM Mono`;ctx.fillStyle=T.sub;ctx.shadowBlur=0;ctx.fillText(cfg.sub,cx,cy*1.75);}
+  ctx.restore();
+  ctx.save();clipStroke(ctx,cfg.shape,cx,cy,r,W,H);
+  ctx.strokeStyle=T.border;ctx.lineWidth=W*0.03;ctx.shadowColor=T.glow;ctx.shadowBlur=W*0.06;ctx.stroke();ctx.restore();
+  if(!STATE.isPro&&!STATE.leadCaptured)drawWatermark(ctx,W,H);
+}
+
+function drawFaceSticker(canvas,size){
+  const ctx=canvas.getContext('2d'),W=size,H=size,cx=W/2,cy=H/2,r=W*0.46;
+  const shape=val('faceShape'),T=THEMES[val('faceBgTheme')]||THEMES.mob;
+  ctx.clearRect(0,0,W,H);
+  ctx.save();clip(ctx,shape,cx,cy,r,W,H);
+  const g=ctx.createRadialGradient(cx,cy*0.6,0,cx,cy,r*1.4);
+  g.addColorStop(0,T.bg1);g.addColorStop(1,T.bg2);ctx.fillStyle=g;ctx.fill();
+  ctx.strokeStyle=T.accent+'33';ctx.lineWidth=0.5;
+  for(let i=-H;i<W+H;i+=W*0.12){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+H,H);ctx.stroke();}
+  ctx.restore();
+  if(STATE.faceImage){
+    const fs=parseInt(val('faceScale'))/100,ox=parseInt(val('faceOffsetX'))*(W/128),oy=parseInt(val('faceOffsetY'))*(W/128);
+    const op=parseInt(val('faceOpacity'))/100;
+    const fW=W*fs,fH=(STATE.faceImage.height/STATE.faceImage.width)*fW;
+    const fx=cx-fW/2+ox,fy=cy-fH/2+oy;
+    ctx.save();clip(ctx,shape,cx,cy,r,W,H);ctx.globalAlpha=op;
+    const filters={none:'none',bw:'grayscale(100%) contrast(110%)',sepia:'sepia(80%) contrast(110%)',contrast:'contrast(160%) brightness(88%)',neon:'saturate(200%) hue-rotate(200deg) contrast(120%)',noir:'grayscale(100%) contrast(150%) brightness(65%)'};
+    ctx.filter=filters[STATE.activeFilter]||'none';
+    ctx.drawImage(STATE.faceImage,fx,fy,fW,fH);ctx.filter='none';ctx.globalAlpha=1;
+    const vig=ctx.createRadialGradient(cx,cy,r*0.2,cx,cy,r*1.05);
+    vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(1,'rgba(0,0,0,0.5)');ctx.fillStyle=vig;ctx.fill();ctx.restore();
+  }else{
+    ctx.save();clip(ctx,shape,cx,cy,r,W,H);ctx.fillStyle='rgba(201,168,76,0.04)';ctx.fill();
+    ctx.font=`${W*0.2}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🤵',cx,cy*0.85);
+    ctx.font=`bold ${W*0.07}px Syne`;ctx.fillStyle='rgba(201,168,76,0.3)';ctx.fillText('UPLOAD FACE',cx,cy*1.22);ctx.restore();
+  }
+  ctx.save();clip(ctx,shape,cx,cy,r,W,H);
+  STATE.activeOverlays.forEach(id=>drawOverlay(ctx,id,cx,cy,W,H));ctx.restore();
+  ctx.save();clip(ctx,shape,cx,cy,r,W,H);
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  const cap=(text,y)=>{if(!text)return;const sz=W*0.09;ctx.font=`900 ${sz}px Anton`;ctx.strokeStyle='rgba(0,0,0,0.9)';ctx.lineWidth=sz*0.18;ctx.lineJoin='round';ctx.strokeText(text,cx,y);ctx.fillStyle=T.text;ctx.shadowColor=T.glow;ctx.shadowBlur=sz*0.4;ctx.fillText(text,cx,y);ctx.shadowBlur=0;};
+  cap(val('faceTopText'),cy*0.13);cap(val('faceBotText'),cy*1.85);ctx.restore();
+  ctx.save();clipStroke(ctx,shape,cx,cy,r,W,H);
+  ctx.strokeStyle=T.border;ctx.lineWidth=W*0.03;ctx.shadowColor=T.glow;ctx.shadowBlur=W*0.06;ctx.stroke();ctx.restore();
+  if(!STATE.isPro&&!STATE.leadCaptured)drawWatermark(ctx,W,H);
+}
+
+function drawWatermark(ctx,W,H){
+  ctx.save();
+  ctx.font=`bold ${W*0.065}px DM Mono`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(201,168,76,0.55)';ctx.globalAlpha=0.7;
+  ctx.translate(W/2,H/2);ctx.rotate(-Math.PI/6);
+  ctx.fillText('ZORRONATION.COM',0,0);
+  ctx.restore();
+}
+
+function drawOverlay(ctx,id,cx,cy,W,H){
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowBlur=0;ctx.globalAlpha=1;
+  switch(id){
+    case'fedora':ctx.font=`${W*0.38}px serif`;ctx.fillText('🎩',cx,cy*0.17);break;
+    case'shades':ctx.font=`${W*0.28}px serif`;ctx.fillText('🕶️',cx,cy*0.80);break;
+    case'chain':ctx.font=`${W*0.22}px serif`;ctx.fillText('⛓️',cx,cy*1.68);break;
+    case'cigar':ctx.save();ctx.translate(cx+W*0.26,cy*0.93);ctx.rotate(-0.3);ctx.font=`${W*0.18}px serif`;ctx.fillText('🚬',0,0);ctx.restore();break;
+    case'money':ctx.font=`${W*0.15}px serif`;[-0.36,-0.18,0,0.18,0.36].forEach((ox,i)=>{ctx.globalAlpha=0.82;ctx.fillText('💵',cx+ox*W,cy*0.32+(i%2===0?-0.08:0.04)*W);});ctx.globalAlpha=1;break;
+    case'crown':ctx.font=`${W*0.32}px serif`;ctx.fillText('👑',cx,cy*0.12);break;
+    case'tattoo':ctx.globalAlpha=0.7;ctx.font=`${W*0.15}px serif`;ctx.fillText('🔱',cx-W*0.27,cy*1.55);ctx.fillText('🔱',cx+W*0.27,cy*1.55);ctx.globalAlpha=1;break;
+    case'gun':ctx.save();ctx.translate(cx+W*0.28,cy*1.22);ctx.rotate(0.3);ctx.font=`${W*0.2}px serif`;ctx.fillText('🔫',0,0);ctx.restore();break;
+    case'rose':ctx.save();ctx.translate(cx-W*0.28,cy*1.3);ctx.rotate(-0.4);ctx.font=`${W*0.18}px serif`;ctx.fillText('🥀',0,0);ctx.restore();break;
+    case'100':ctx.font=`${W*0.19}px serif`;ctx.fillText('💯',cx+W*0.28,cy*0.27);break;
+    case'smoke':ctx.globalAlpha=0.5;ctx.font=`${W*0.24}px serif`;ctx.fillText('💨',cx+W*0.2,cy*0.45);ctx.globalAlpha=1;break;
+    case'scar':ctx.strokeStyle='#cc0000';ctx.lineWidth=W*0.024;ctx.lineCap='round';ctx.shadowColor='#ff0000';ctx.shadowBlur=W*0.02;ctx.beginPath();ctx.moveTo(cx+W*0.08,cy*0.60);ctx.lineTo(cx-W*0.04,cy*1.0);ctx.stroke();ctx.shadowBlur=0;break;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════
+function val(id){return document.getElementById(id)?.value||'';}
+function wrapText(ctx,text,cx,cy,maxW,size,fn,color,glow){
+  if(!text)return;ctx.font=`900 ${size}px '${fn}',sans-serif`;ctx.fillStyle=color;ctx.shadowColor=glow;ctx.shadowBlur=size*0.5;
+  const words=text.split(' ');let lines=[],line='';
+  words.forEach(w=>{const t=line?line+' '+w:w;if(ctx.measureText(t).width>maxW&&line){lines.push(line);line=w;}else line=t;});
+  if(line)lines.push(line);
+  let sz=size;if(lines.length>3)sz*=0.8;if(lines.length>4)sz*=0.82;
+  ctx.font=`900 ${sz}px '${fn}',sans-serif`;
+  const lh=sz*1.2,sy=cy-((lines.length-1)*lh)/2;
+  lines.forEach((l,i)=>ctx.fillText(l,cx,sy+i*lh));ctx.shadowBlur=0;
+}
+function clip(ctx,shape,cx,cy,r,W,H){ctx.beginPath();makeShape(ctx,shape,cx,cy,r,W,H);ctx.clip();ctx.fill();}
+function clipStroke(ctx,shape,cx,cy,r,W,H){ctx.beginPath();makeShape(ctx,shape,cx,cy,r,W,H);ctx.clip();}
+function makeShape(ctx,shape,cx,cy,r,W,H){
+  if(shape==='circle'){ctx.arc(cx,cy,r,0,Math.PI*2);}
+  else if(shape==='rounded'){const rd=W*0.12,x=cx-r,y=cy-r,s=r*2;ctx.moveTo(x+rd,y);ctx.lineTo(x+s-rd,y);ctx.quadraticCurveTo(x+s,y,x+s,y+rd);ctx.lineTo(x+s,y+s-rd);ctx.quadraticCurveTo(x+s,y+s,x+s-rd,y+s);ctx.lineTo(x+rd,y+s);ctx.quadraticCurveTo(x,y+s,x,y+s-rd);ctx.lineTo(x,y+rd);ctx.quadraticCurveTo(x,y,x+rd,y);ctx.closePath();}
+  else if(shape==='hex'){for(let i=0;i<6;i++){const a=(Math.PI/3)*i-Math.PI/6;i===0?ctx.moveTo(cx+r*Math.cos(a),cy+r*Math.sin(a)):ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));}ctx.closePath();}
+  else if(shape==='diamond'){ctx.moveTo(cx,cy-r);ctx.lineTo(cx+r,cy);ctx.lineTo(cx,cy+r);ctx.lineTo(cx-r,cy);ctx.closePath();}
+  else if(shape==='shield'){const x=cx-r,y=cy-r,s=r*2;ctx.moveTo(x,y);ctx.lineTo(x+s,y);ctx.lineTo(x+s,cy+r*0.3);ctx.quadraticCurveTo(x+s,cy+r*1.2,cx,cy+r*1.1);ctx.quadraticCurveTo(x,cy+r*1.2,x,cy+r*0.3);ctx.closePath();}
+}
+
+// ══════════════════════════════════════════════════════
+//  DOWNLOAD FLOW
+// ══════════════════════════════════════════════════════
+function handleDownload(){
+  if(!STATE.leadCaptured&&!STATE.isPro){openModal('leadModal');return;}
+  if(!STATE.isPro&&STATE.freeDownloadsLeft<=0){openPremiumModal();return;}
+  doDownload();
+}
+function handlePresetDownload(p){
+  loadPreset(p);
+  if(!STATE.leadCaptured&&!STATE.isPro){openModal('leadModal');return;}
+  if(!STATE.isPro&&STATE.freeDownloadsLeft<=0){openPremiumModal();return;}
+  doDownload();
+}
+function doDownload(){
+  const exp=document.getElementById('exportCanvas');
+  if(STATE.mode==='classic')drawClassicSticker(exp,getClassicCfg(),128);
+  else drawFaceSticker(exp,128);
+  // Remove watermark for downloaded file if lead captured
+  if(STATE.leadCaptured&&!STATE.isPro){
+    // Re-draw without watermark for lead-captured free users
+    if(STATE.mode==='classic')drawClassicSticker(exp,getClassicCfg(),128);
+    else drawFaceSticker(exp,128);
+  }
+  const a=document.createElement('a');
+  const name=(document.getElementById('mainText')?.value||'sticker').toLowerCase().replace(/[^a-z0-9]+/g,'-').substring(0,20);
+  a.download=`zorronation-${name}.png`;a.href=exp.toDataURL('image/png');a.click();
+  if(!STATE.isPro){STATE.freeDownloadsLeft--;updateFreeCounter();}
+}
+function updateFreeCounter(){
+  if(STATE.isPro){
+    document.getElementById('freeCounter').classList.add('premium-active');
+    document.getElementById('counterText').innerHTML='⚡ PRO MEMBER — <strong>UNLIMITED DOWNLOADS</strong>';
+    document.getElementById('counterFill').style.width='100%';
+    document.getElementById('counterFill').style.background='linear-gradient(90deg,var(--green),#4aff7a)';
+    document.getElementById('navUpgradeBtn').textContent='⚡ PRO ACTIVE';
+    document.getElementById('navUpgradeBtn').classList.add('unlocked');
+    document.getElementById('upsellCard').style.display='none';
+    return;
+  }
+  const left=Math.max(0,STATE.freeDownloadsLeft);
+  document.getElementById('leftCount').textContent=left;
+  document.getElementById('counterFill').style.width=(left/3*100)+'%';
+  if(left===0){document.getElementById('counterText').innerHTML='FREE DOWNLOADS: <strong>0 / 3</strong> — <span style="color:var(--red);">LIMIT REACHED</span>';}
+}
+
+// ══════════════════════════════════════════════════════
+//  LEAD CAPTURE → GHL
+// ══════════════════════════════════════════════════════
+async function submitLead(){
+  const name=document.getElementById('leadName').value.trim();
+  const email=document.getElementById('leadEmail').value.trim();
+  if(!name||!email){alert('Please enter your name and email.');return;}
+  if(!email.includes('@')){alert('Please enter a valid email.');return;}
+  const btn=document.querySelector('.modal-submit');
+  btn.textContent='SENDING...';btn.disabled=true;
+  // Fire GHL webhook
+  try{
+    await fetch(CONFIG.ghlWebhookUrl,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        firstName:name.split(' ')[0],lastName:name.split(' ').slice(1).join(' ')||'',
+        email,source:'Zorronation AI Sticker Studio',
+        tags:['sticker-studio','lead','freemium'],
+        customFields:{tool:'AI StickeeDownloadsLeft<=0){openPremiumModal();return;}
+  doDownload();
+}
+function doDownload(){
+  const exp=document.getElementById('exportCanvas');
+  if(STATE.mode==='classic')drawClassicSticker(exp,getClassicCfg(),128);
+  else drawFaceSticker(exp,128);
+  // Remove watermark for downloaded file if lead captured
+  if(STATE.leadCaptured&&!STATE.isPro){
+    // Re-draw without watermark for lead-captured free users
+    if(STATE.mode==='classic')drawClassicSticker(exp,getClassicCfg(),128);
+    else drawFaceSticker(exp,128);
+  }
+  const a=document.createElement('a');
+  const name=(document.getElementById('mainText')?.value||'sticker').toLowerCase().replace(/[^a-z0-9]+/g,'-').substring(0,20);
+  a.download=`zorronation-${name}.png`;a.href=exp.toDataURL('image/png');a.click();
+  if(!STATE.isPro){STATE.freeDownloadsLeft--;updateFreeCounter();}
+}
+function updateFreeCounter(){
+  if(STATE.isPro){
+    document.getElementById('freeCounter').classList.add('premium-active');
+    document.getElementById('counterText').innerHTML='⚡ PRO MEMBER — <strong>UNLIMITED DOWNLOADS</strong>';
+    document.getElementById('counterFill').style.width='100%';
+    document.getElementById('counterFill').style.background='linear-gradient(90deg,var(--green),#4aff7a)';
+    document.getElementById('navUpgradeBtn').textContent='⚡ PRO ACTIVE';
+    document.getElementById('navUpgradeBtn').classList.add('unlocked');
+    document.getElementById('upsellCard').style.display='none';
+    return;
+  }
+  const left=Math.max(0,STATE.freeDownloadsLeft);
+  document.getElementById('leftCount').textContent=left;
+  document.getElementById('counterFill').style.width=(left/3*100)+'%';
+  if(left===0){document.getElementById('counterText').innerHTML='FREE DOWNLOADS: <strong>0 / 3</strong> — <span style="color:var(--red);">LIMIT REACHED</span>';}
+}
+
+// ══════════════════════════════════════════════════════
+//  LEAD CAPTURE → GHL
+// ══════════════════════════════════════════════════════
+async function submitLead(){
+  const name=document.getElementById('leadName').value.trim();
+  const email=document.getElementById('leadEmail').value.trim();
+  if(!name||!email){alert('Please enter your name and email.');return;}
+  if(!email.includes('@')){alert('Please enter a valid email.');return;}
+  const btn=document.querySelector('.modal-submit');
+  btn.textContent='SENDING...';btn.disabled=true;
+  // Fire GHL webhook
+  try{
+    await fetch(CONFIG.ghlWebhookUrl,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        firstName:name.split(' ')[0],lastName:name.split(' ').slice(1).join(' ')||'',
+        email,source:'Zorronation AI Sticker Studio',
+        tags:['sticker-studio','lead','freemium'],
+        customFields:{tool:'AI Sticket=${encodeURIComponent(text)}`,'_blank');
+}
+function copyShareLink(){
+  navigator.clipboard.writeText(`${CONFIG.siteUrl}?ref=share`).then(()=>{
+    const btn=document.getElementById('copyLinkBtn');
+    btn.textContent='✓  LINK COPIED!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='🔗  COPY SHARE LINK';btn.classList.remove('copied');},2500);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  MODALS
+// ══════════════════════════════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('active');}
+function closeModal(id){document.getElementById(id).classList.remove('active');}
+function openPremiumModal(){openModal('premiumModal');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('active');}));
+
+// ══════════════════════════════════════════════════════
+//  RANDOMIZE
+// ══════════════════════════════════════════════════════
+function randomize(){
+  const keys=Object.keys(FRANCHISES),f=keys[Math.floor(Math.random()*keys.length)];
+  loadFranchise(f);selectQuote(Math.floor(Math.random()*FRANCHISES[f].quotes.length));
+  const tm=Object.keys(THEMES),sh=['circle','rounded','shield','diamond','hex'];
+  document.getElementById('theme').value=tm[Math.floor(Mat
