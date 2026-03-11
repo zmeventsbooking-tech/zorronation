@@ -1,218 +1,389 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zorro Nation — AI Products</title>
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <meta name="description" content="Zorro Nation AI Products — Premium AI-powered tools for trading, content creation, and business automation.">
-  <meta property="og:title" content="Zorro Nation — AI Products">
-  <meta property="og:description" content="Premium AI-powered tools for trading, content creation, and business automation. Built by Zorro Nation.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://zorronation.com/ais.html">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Zorro Nation — AI Products">
-  <meta name="twitter:description" content="Premium AI-powered tools for trading, content creation, and business automation.">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap');
-    :root { --gold:#C9A84C; --black:#0A0A0A; --charcoal:#1A1A1A; --dark-gray:#2A2A2A; --mid-gray:#3A3A3A; --text:#E8E8E8; --text-muted:#999; }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'Inter',sans-serif; background:var(--black); color:var(--text); line-height:1.6; }
-
-    /* NAV */
-    .site-nav { display:flex; justify-content:space-between; align-items:center; padding:18px 40px; position:sticky; top:0; z-index:1000; background:var(--black); border-bottom:1px solid var(--mid-gray); }
-    .site-nav .nav-logo { font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--gold); font-weight:700; letter-spacing:2px; text-decoration:none; }
-    .site-nav .nav-logo span { color:var(--text); font-weight:400; }
-    .nav-links { display:flex; gap:16px; align-items:center; }
-    .nav-links .nav-link { color:var(--gold); border:1px solid var(--gold); padding:8px 22px; border-radius:6px; text-decoration:none; font-size:0.85rem; font-weight:600; letter-spacing:1px; transition:all 0.3s; }
-    .nav-links .nav-link:hover { background:var(--gold); color:var(--black); }
-
-    /* HERO */
-    .hero { text-align:center; padding:100px 40px 80px; background:radial-gradient(ellipse at center, rgba(201,168,76,0.08) 0%, transparent 70%); }
-    .hero-badge { display:inline-block; padding:8px 24px; border:1px solid var(--gold); border-radius:50px; font-size:0.75rem; letter-spacing:3px; color:var(--gold); margin-bottom:32px; text-transform:uppercase; }
-    .hero h1 { font-family:'Playfair Display',serif; font-size:3.5rem; font-weight:700; color:var(--gold); margin-bottom:20px; line-height:1.1; }
-    .hero p { font-size:1.15rem; color:var(--text-muted); max-width:650px; margin:0 auto 40px; }
-
-    /* PRODUCTS GRID */
-    .products-section { padding:60px 40px; max-width:1200px; margin:0 auto; }
-    .section-header { text-align:center; margin-bottom:60px; }
-    .section-header h2 { font-family:'Playfair Display',serif; font-size:2.2rem; color:var(--gold); margin-bottom:12px; }
-    .section-header p { color:var(--text-muted); font-size:1rem; max-width:600px; margin:0 auto; }
-
-    .product-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:28px; }
-    .product-card { background:var(--charcoal); border:1px solid var(--mid-gray); border-radius:16px; padding:0; overflow:hidden; transition:all 0.3s ease; display:flex; flex-direction:column; }
-    .product-card:hover { border-color:var(--gold); transform:translateY(-4px); box-shadow:0 12px 40px rgba(201,168,76,0.1); }
-    .product-card.featured { border-color:var(--gold); box-shadow:0 0 30px rgba(201,168,76,0.15); }
-    .product-card.featured .card-badge { display:block; }
-    .card-badge { display:none; background:var(--gold); color:var(--black); text-align:center; padding:8px; font-size:0.75rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; }
-    .card-body { padding:36px 32px; flex:1; display:flex; flex-direction:column; }
-    .card-icon { font-size:2.4rem; margin-bottom:18px; display:block; }
-    .card-body h3 { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--gold); margin-bottom:8px; }
-    .card-body .card-tagline { color:var(--text); font-size:0.95rem; margin-bottom:16px; font-weight:500; }
-    .card-body p { color:var(--text-muted); font-size:0.9rem; line-height:1.7; margin-bottom:20px; }
-    .card-features { list-style:none; padding:0; margin-bottom:24px; flex:1; }
-    .card-features li { color:var(--text); font-size:0.85rem; padding:7px 0; border-top:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:8px; }
-    .card-features li::before { content:"\2713"; color:var(--gold); font-weight:700; font-size:0.9rem; }
-    .card-price { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--gold); font-weight:700; margin-bottom:6px; }
-    .card-price-note { color:var(--text-muted); font-size:0.8rem; margin-bottom:18px; }
-    .card-btn { display:block; text-align:center; padding:14px; background:transparent; border:2px solid var(--gold); color:var(--gold); text-decoration:none; font-weight:700; font-size:0.9rem; border-radius:8px; letter-spacing:1px; transition:all 0.3s; }
-    .card-btn:hover { background:var(--gold); color:var(--black); }
-    .product-card.featured .card-btn { background:var(--gold); color:var(--black); }
-    .product-card.featured .card-btn:hover { background:#B8953F; }
-
-    /* COMING SOON */
-    .coming-soon { padding:80px 40px; background:var(--charcoal); }
-    .coming-soon .section-header { margin-bottom:40px; }
-    .coming-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:24px; max-width:1000px; margin:0 auto; }
-    .coming-card { background:var(--dark-gray); border:1px solid var(--mid-gray); border-radius:12px; padding:30px 26px; text-align:center; opacity:0.7; }
-    .coming-card .card-icon { font-size:2rem; margin-bottom:14px; }
-    .coming-card h4 { font-family:'Playfair Display',serif; color:var(--gold); font-size:1.1rem; margin-bottom:8px; }
-    .coming-card p { color:var(--text-muted); font-size:0.85rem; }
-    .coming-tag { display:inline-block; background:var(--mid-gray); color:var(--gold); font-size:0.65rem; font-weight:700; padding:4px 12px; border-radius:20px; letter-spacing:2px; text-transform:uppercase; margin-top:12px; }
-
-    /* CTA */
-    .cta-section { text-align:center; padding:80px 40px; background:radial-gradient(ellipse at center, rgba(201,168,76,0.06) 0%, transparent 70%); }
-    .cta-section h2 { font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold); margin-bottom:16px; }
-    .cta-section p { color:var(--text-muted); margin-bottom:32px; max-width:500px; margin-left:auto; margin-right:auto; }
-    .cta-btn { display:inline-block; padding:16px 48px; background:var(--gold); color:var(--black); text-decoration:none; font-weight:700; font-size:1rem; border-radius:8px; letter-spacing:1px; transition:all 0.3s; }
-    .cta-btn:hover { background:#B8953F; transform:translateY(-2px); box-shadow:0 8px 30px rgba(201,168,76,0.3); }
-
-    /* FOOTER */
-    .footer { text-align:center; padding:40px; border-top:1px solid var(--mid-gray); color:var(--text-muted); font-size:0.8rem; }
-    .footer a { color:var(--gold); text-decoration:none; }
-
-    @media (max-width:768px) {
-      .hero h1 { font-size:2.4rem; }
-      .product-grid { grid-template-columns:1fr; }
-      .coming-grid { grid-template-columns:1fr; }
-      .site-nav { padding:14px 20px; }
-      .nav-links .nav-link { padding:6px 14px; font-size:0.75rem; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zorro Nation — AI Products</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:         #0a0a0a;
+  --surface:    #111111;
+  --surface2:   #181818;
+  --border:     rgba(255,255,255,0.07);
+  --border-hi:  rgba(255,255,255,0.13);
+  --text:       #f0ede8;
+  --muted:      #666;
+  --muted2:     #333;
+  --gold:       #c9a84c;
+  --gold2:      #e8c96a;
+  --gold-bg:    rgba(201,168,76,0.10);
+  --gold-border:rgba(201,168,76,0.28);
+  --green:      #2ecc71;
+  --r:          14px;
+}
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  height: 60px; padding: 0 40px;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem; letter-spacing: 4px;
+  color: var(--text); text-decoration: none;
+}
+.nav-logo span { color: var(--gold); }
+.nav-links { display: flex; gap: 28px; }
+.nav-link {
+  font-size: 0.82rem; font-weight: 500; letter-spacing: 0.03em;
+  color: var(--muted); text-decoration: none; transition: color 0.18s;
+}
+.nav-link:hover, .nav-link.active { color: var(--text); }
+.nav-link.active { color: var(--gold); }
+/* ── HERO ── */
+.page-hero {
+  text-align: center;
+  padding: 72px 24px 56px;
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 500px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--gold-bg); border: 1px solid var(--gold-border);
+  border-radius: 40px; padding: 5px 16px;
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 22px;
+}
+.page-hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 4.8rem);
+  letter-spacing: 3px; line-height: 0.95;
+  color: var(--text); margin-bottom: 18px;
+}
+.page-hero p {
+  font-size: 0.95rem; color: var(--muted);
+  max-width: 540px; margin: 0 auto; line-height: 1.75;
+}
+/* ── SECTION ── */
+.section {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 28px 72px;
+}
+.section-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem; letter-spacing: 3px; color: var(--text);
+  margin-bottom: 6px;
+}
+.section-sub {
+  font-size: 0.82rem; color: var(--muted);
+  margin-bottom: 32px; letter-spacing: 0.02em;
+}
+/* ── PRODUCT GRID ── */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+}
+/* ── PRODUCT CARD ── */
+.product-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 0;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.product-card:hover {
+  border-color: var(--border-hi);
+  transform: translateY(-2px);
+}
+.product-card.featured {
+  border-color: var(--gold-border);
+  background: linear-gradient(160deg, #131000 0%, #111111 100%);
+}
+.product-card.featured:hover { border-color: var(--gold); }
+.product-card.new-card {
+  border-color: rgba(201,168,76,0.4);
+  background: linear-gradient(160deg, #100d00 0%, #0f0f0f 100%);
+}
+.product-card.new-card:hover { border-color: var(--gold); }
+.card-badge {
+  display: inline-block;
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 3px 9px;
+  border-radius: 20px; margin-bottom: 16px;
+  width: fit-content;
+}
+.badge-pop { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold-border); }
+.badge-new { background: rgba(46,204,113,0.1); color: var(--green); border: 1px solid rgba(46,204,113,0.3); }
+.card-icon {
+  font-size: 2rem; margin-bottom: 12px; display: block;
+}
+.card-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.35rem; letter-spacing: 2px; color: var(--text);
+  margin-bottom: 3px;
+}
+.card-tagline {
+  font-size: 0.75rem; font-weight: 600; color: var(--gold);
+  letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 12px;
+}
+.card-desc {
+  font-size: 0.82rem; color: var(--muted); line-height: 1.7; margin-bottom: 18px;
+}
+.card-features {
+  list-style: none; display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 20px; flex: 1;
+}
+.card-features li {
+  font-size: 0.75rem; color: #888;
+  display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;
+}
+.card-features li::before {
+  content: '✓'; color: var(--gold); flex-shrink: 0;
+  font-weight: 700; font-size: 0.65rem; margin-top: 2px;
+}
+.card-price {
+  font-size: 1.4rem; font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 1px; color: var(--text); margin-bottom: 3px;
+}
+.card-price-note {
+  font-size: 0.68rem; color: var(--muted); margin-bottom: 16px;
+  line-height: 1.5;
+}
+.card-cta {
+  display: block; width: 100%; text-align: center;
+  background: var(--gold); color: #000;
+  border: none; border-radius: 8px; padding: 12px;
+  font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem; letter-spacing: 2px;
+  cursor: pointer; text-decoration: none;
+  transition: opacity 0.18s;
+}
+.card-cta:hover { opacity: 0.84; }
+.card-cta.outline {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border-hi);
+}
+.card-cta.outline:hover { border-color: var(--gold); color: var(--gold); }
+/* ── COMING SOON GRID ── */
+.soon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px; margin-top: 8px;
+}
+.soon-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px 20px;
+  opacity: 0.65;
+}
+.soon-icon { font-size: 1.5rem; margin-bottom: 10px; display: block; }
+.soon-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 2px; color: var(--text); margin-bottom: 4px; }
+.soon-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.6; margin-bottom: 10px; }
+.soon-eta {
+  display: inline-block; font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 20px;
+  background: var(--surface2); color: var(--muted); border: 1px solid var(--border);
+}
+/* ── CTA BANNER ── */
+.cta-banner {
+  background: linear-gradient(135deg, #131000 0%, #111111 100%);
+  border: 1px solid var(--gold-border);
+  border-radius: var(--r); padding: 40px 36px;
+  text-align: center; margin-top: 0;
+}
+.cta-banner h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem; letter-spacing: 3px; color: var(--text); margin-bottom: 8px;
+}
+.cta-banner p { font-size: 0.88rem; color: var(--muted); margin-bottom: 22px; }
+.cta-banner a {
+  display: inline-block;
+  background: var(--gold); color: #000;
+  border-radius: 8px; padding: 12px 28px;
+  font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px;
+  text-decoration: none; transition: opacity 0.18s;
+}
+.cta-banner a:hover { opacity: 0.84; }
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border); background: var(--surface);
+  padding: 26px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 14px;
+}
+.foot-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 4px; color: var(--text); }
+.foot-logo span { color: var(--gold); }
+.foot-copy { font-size: 0.64rem; color: var(--muted2); letter-spacing: 0.03em; margin-top: 2px; }
+.foot-links { display: flex; gap: 20px; }
+.foot-link { font-size: 0.7rem; color: var(--muted); text-decoration: none; transition: color 0.18s; }
+.foot-link:hover { color: var(--gold); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+.page-hero { animation: fadeUp 0.45s cubic-bezier(.22,1,.36,1) both; }
+.section    { animation: fadeUp 0.45s 0.1s cubic-bezier(.22,1,.36,1) both; }
+</style>
 </head>
 <body>
-
-<div class="site-nav">
-  <a href="/" class="nav-logo">ZORRO <span>NATION</span></a>
+<!-- NAV -->
+<nav>
+  <a href="https://zorronation.com" class="nav-logo">ZORRO <span>NATION</span></a>
   <div class="nav-links">
-    <a href="payment.html" class="nav-link">Pricing</a>
-    <a href="/" class="nav-link">Onboarding</a>
-    <a href="community.html" class="nav-link">Community</a>
+    <a href="https://zorronation.com/ais.html" class="nav-link active">AI Products</a>
+    <a href="https://zorronation.com/payment.html" class="nav-link">Pricing</a>
+    <a href="https://zorronation.com/" class="nav-link">Onboarding</a>
+    <a href="https://zorronation.com/community.html" class="nav-link">Community</a>
   </div>
-</div>
-
-<section class="hero">
-  <div class="hero-badge">AI-Powered Tools</div>
-  <h1>AI Products</h1>
+</nav>
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-tag">AI-Powered Tools</div>
+  <h1>AI PRODUCTS</h1>
   <p>Premium AI-powered tools built to give you an edge. From automated trading signals to content generation — leverage artificial intelligence to scale your business and stay ahead of the market.</p>
-</section>
-
-<section class="products-section">
-  <div class="section-header">
-    <h2>Available Now</h2>
-    <p>Production-ready AI tools you can start using today.</p>
-  </div>
+</div>
+<!-- AVAILABLE NOW -->
+<section class="section">
+  <div class="section-label">Available Now</div>
+  <div class="section-sub">Production-ready AI tools you can start using today.</div>
   <div class="product-grid">
-
+    <!-- TRADING BOT -->
     <div class="product-card featured">
-      <div class="card-badge">Most Popular</div>
-      <div class="card-body">
-        <span class="card-icon">🤖</span>
-        <h3>Zorro Trading Bot</h3>
-        <div class="card-tagline">AI-Powered Market Analysis</div>
-        <p>Automated trading signals powered by machine learning. Analyzes market patterns, identifies high-probability setups, and delivers real-time alerts.</p>
-        <ul class="card-features">
-          <li>Real-time market scanning</li>
-          <li>AI pattern recognition</li>
-          <li>Risk management alerts</li>
-          <li>Multi-market coverage (Forex, Crypto, Stocks)</li>
-          <li>Telegram & Discord signal delivery</li>
-        </ul>
-        <div class="card-price">$97/mo</div>
-        <div class="card-price-note">Cancel anytime • 7-day free trial</div>
-        <a href="#" class="card-btn">Get Access</a>
-      </div>
+      <span class="card-badge badge-pop">Most Popular</span>
+      <span class="card-icon">🤖</span>
+      <div class="card-name">Zorro Trading Bot</div>
+      <div class="card-tagline">AI-Powered Market Analysis</div>
+      <p class="card-desc">Automated trading signals powered by machine learning. Analyzes market patterns, identifies high-probability setups, and delivers real-time alerts.</p>
+      <ul class="card-features">
+        <li>Real-time market scanning</li>
+        <li>AI pattern recognition</li>
+        <li>Risk management alerts</li>
+        <li>Multi-market coverage (Forex, Crypto, Stocks)</li>
+        <li>Telegram & Discord signal delivery</li>
+      </ul>
+      <div class="card-price">$97<span style="font-size:0.9rem;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--muted);letter-spacing:0;">/mo</span></div>
+      <div class="card-price-note">Cancel anytime · 7-day free trial</div>
+      <a href="#" class="card-cta">Get Access</a>
     </div>
-
-    <div class="product-card">
-      <div class="card-badge">Most Popular</div>
-      <div class="card-body">
-        <span class="card-icon">🎬</span>
-        <h3>Content Engine AI</h3>
-        <div class="card-tagline">Auto-Generate Video Content</div>
-        <p>Turn ideas into fully produced short-form videos. AI handles scripting, editing, captions, and thumbnails — ready to post across all platforms.</p>
-        <ul class="card-features">
-          <li>AI script generation from topics</li>
-          <li>Automated video editing & cuts</li>
-          <li>Dynamic caption overlays</li>
-          <li>Thumbnail generation</li>
-          <li>Multi-platform export (TikTok, Reels, Shorts)</li>
-        </ul>
-        <div class="card-price">$197/mo</div>
-        <div class="card-price-note">Included with Growth plan & above</div>
-        <a href="payment.html" class="card-btn">View Plans</a>
-      </div>
+    <!-- CONTENT ENGINE -->
+    <div class="product-card featured">
+      <span class="card-badge badge-pop">Most Popular</span>
+      <span class="card-icon">🎬</span>
+      <div class="card-name">Content Engine AI</div>
+      <div class="card-tagline">Auto-Generate Video Content</div>
+      <p class="card-desc">Turn ideas into fully produced short-form videos. AI handles scripting, editing, captions, and thumbnails — ready to post across all platforms.</p>
+      <ul class="card-features">
+        <li>AI script generation from topics</li>
+        <li>Automated video editing & cuts</li>
+        <li>Dynamic caption overlays</li>
+        <li>Thumbnail generation</li>
+        <li>Multi-platform export (TikTok, Reels, Shorts)</li>
+      </ul>
+      <div class="card-price">$197<span style="font-size:0.9rem;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--muted);letter-spacing:0;">/mo</span></div>
+      <div class="card-price-note">Included with Growth plan & above</div>
+      <a href="https://zorronation.com/payment.html" class="card-cta">View Plans</a>
     </div>
-
-    <div class="product-card">
-      <div class="card-badge">Most Popular</div>
-      <div class="card-body">
-        <span class="card-icon">📊</span>
-        <h3>Market Sentiment AI</h3>
-        <div class="card-tagline">Real-Time Sentiment Analysis</div>
-        <p>Scans social media, news, and market data to gauge real-time sentiment. Know what the crowd is thinking before they move the market.</p>
-        <ul class="card-features">
-          <li>Twitter/X & Reddit sentiment tracking</li>
-          <li>News headline analysis</li>
-          <li>Fear & Greed index</li>
-          <li>Whale movement alerts</li>
-          <li>Daily sentiment reports</li>
-        </ul>
-        <div class="card-price">$47/mo</div>
-        <div class="card-price-note">Cancel anytime</div>
-        <a href="#" class="card-btn">Get Access</a>
-      </div>
+    <!-- MARKET SENTIMENT -->
+    <div class="product-card featured">
+      <span class="card-badge badge-pop">Most Popular</span>
+      <span class="card-icon">📊</span>
+      <div class="card-name">Market Sentiment AI</div>
+      <div class="card-tagline">Real-Time Sentiment Analysis</div>
+      <p class="card-desc">Scans social media, news, and market data to gauge real-time sentiment. Know what the crowd is thinking before they move the market.</p>
+      <ul class="card-features">
+        <li>Twitter/X & Reddit sentiment tracking</li>
+        <li>News headline analysis</li>
+        <li>Fear & Greed index</li>
+        <li>Whale movement alerts</li>
+        <li>Daily sentiment reports</li>
+      </ul>
+      <div class="card-price">$47<span style="font-size:0.9rem;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--muted);letter-spacing:0;">/mo</span></div>
+      <div class="card-price-note">Cancel anytime</div>
+      <a href="#" class="card-cta">Get Access</a>
     </div>
-
-  </div>
-</section>
-
-<section class="coming-soon">
-  <div class="section-header">
-    <h2>Coming Soon</h2>
-    <p>New AI products in development. Join the waitlist to get early access.</p>
-  </div>
-  <div class="coming-grid">
-    <div class="coming-card">
-      <span class="card-icon">🗣️</span>
-      <h4>AI Voice Cloning</h4>
-      <p>Clone your voice and generate voiceovers for any script in seconds.</p>
-      <span class="coming-tag">Q2 2025</span>
-    </div>
-    <div class="coming-card">
-      <span class="card-icon">🧠</span>
-      <h4>Portfolio AI</h4>
-      <p>AI-managed portfolio allocation and rebalancing based on your risk profile.</p>
-      <span class="coming-tag">Q3 2025</span>
-    </div>
-    <div class="coming-card">
-      <span class="card-icon">💬</span>
-      <h4>Zorro Chat AI</h4>
-      <p>Personal AI assistant trained on trading strategies and market analysis.</p>
-      <span class="coming-tag">Q3 2025</span>
+    <!-- ★ STICKER STUDIO — NEW ★ -->
+    <div class="product-card new-card">
+      <span class="card-badge badge-new">✦ New</span>
+      <span class="card-icon">🎨</span>
+      <div class="card-name">Sticker Studio AI</div>
+      <div class="card-tagline">Generate Gangster Slack Stickers</div>
+      <p class="card-desc">AI-powered sticker maker for Slack and Discord. Pick a franchise, drop a vibe, and generate a custom gangster sticker in seconds.</p>
+      <ul class="card-features">
+        <li>8 franchise themes — Scarface, Sopranos, The Wire & more</li>
+        <li>AI Quote Writer — describe the vibe, get the line</li>
+        <li>Face Mode — upload a photo, add gangster overlays</li>
+        <li>AI Pack Generator — 8 quotes from one prompt (Pro)</li>
+        <li>128×128 Slack-ready PNG export</li>
+      </ul>
+      <div class="card-price" style="color:var(--gold);">Free <span style="font-size:0.75rem;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--muted);letter-spacing:0;">to start</span></div>
+      <div class="card-price-note">$9.99/mo or $49 lifetime · 3 free downloads/day</div>
+      <a href="/sticker-studio.html" class="card-cta">Launch Sticker Studio →</a>
     </div>
   </div>
 </section>
-
-<section class="cta-section">
-  <h2>Ready to Get Started?</h2>
-  <p>Explore our full suite of AI products and find the right tools for your business.</p>
-  <a href="/" class="cta-btn">Start Onboarding</a>
+<!-- COMING SOON -->
+<section class="section" style="padding-top:0;">
+  <div class="section-label">Coming Soon</div>
+  <div class="section-sub">New AI products in development. Join the waitlist to get early access.</div>
+  <div class="soon-grid">
+    <div class="soon-card">
+      <span class="soon-icon">🗣️</span>
+      <div class="soon-name">AI Voice Cloning</div>
+      <p class="soon-desc">Clone your voice and generate voiceovers for any script in seconds.</p>
+      <span class="soon-eta">Q2 2025</span>
+    </div>
+    <div class="soon-card">
+      <span class="soon-icon">🧠</span>
+      <div class="soon-name">Portfolio AI</div>
+      <p class="soon-desc">AI-managed portfolio allocation and rebalancing based on your risk profile.</p>
+      <span class="soon-eta">Q3 2025</span>
+    </div>
+    <div class="soon-card">
+      <span class="soon-icon">💬</span>
+      <div class="soon-name">Zorro Chat AI</div>
+      <p class="soon-desc">Personal AI assistant trained on trading strategies and market analysis.</p>
+      <span class="soon-eta">Q3 2025</span>
+    </div>
+  </div>
 </section>
-
-<footer class="footer">
-  <p>&copy; 2025 Zorro Nation. All rights reserved. | <a href="/">Home</a> | <a href="payment.html">Pricing</a> | <a href="ais.html">AIs</a></p>
+<!-- CTA BANNER -->
+<section class="section" style="padding-top:0;">
+  <div class="cta-banner">
+    <h2>READY TO GET STARTED?</h2>
+    <p>Explore our full suite of AI products and find the right tools for your business.</p>
+    <a href="https://zorconation.com/">Start Onboarding</a>
+  </div>
+</section>
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="foot-logo">ZORRO <span>NATION</span></div>
+    <div class="foot-copy">© 2026 Zorro Nation — A Zorro Markets LLC Service</div>
+  </div>
+  <div class="foot-links">
+    <a href="https://zorronation.com/" class="foot-link">Home</a>
+    <a href="https://zorronation.com/payment.html" class="foot-link">Pricing</a>
+    <a href="https://zorronation.com/ais.html" class="foot-link">AI Products</a>
+    <a href="https://zorronation.com/community.html" class="foot-link">Community</a>
+  </div>
 </footer>
-
 </body>
 </html>
