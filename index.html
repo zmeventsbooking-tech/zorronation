@@ -1285,30 +1285,94 @@
 </footer>
 
 <script>
+// ═══════════════ INJECT ERROR & SPINNER CSS ═══════════════
+(function(){
+  const s = document.createElement('style');
+  s.textContent = '.field-error{color:var(--red);font-size:0.75rem;margin-top:0.3rem;font-weight:500}.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(10,10,10,0.3);border-top-color:var(--black);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}@keyframes spin{to{transform:rotate(360deg)}}.submit-error{color:var(--red);font-size:0.85rem;margin-top:0.75rem}';
+  document.head.appendChild(s);
+})();
+
+// ═══════════════ VALIDATION HELPERS ═══════════════
+function showError(id, msg) {
+  clearError(id);
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.borderColor = 'var(--red)';
+  const w = el.closest('.field');
+  if (!w) return;
+  const e = document.createElement('div');
+  e.className = 'field-error';
+  e.textContent = msg;
+  w.appendChild(e);
+}
+function showGroupError(id, msg) {
+  const g = document.getElementById(id);
+  if (!g) return;
+  const w = g.closest('.field');
+  if (!w) return;
+  const old = w.querySelector('.field-error');
+  if (old) old.remove();
+  const e = document.createElement('div');
+  e.className = 'field-error';
+  e.textContent = msg;
+  w.appendChild(e);
+}
+function clearError(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.borderColor = '';
+  const w = el.closest('.field');
+  if (!w) return;
+  const err = w.querySelector('.field-error');
+  if (err) err.remove();
+}
+function clearAllErrors() {
+  document.querySelectorAll('.field-error').forEach(e => e.remove());
+  document.querySelectorAll('input,select,textarea').forEach(e => e.style.borderColor = '');
+}
+function validatePage(p) {
+  clearAllErrors();
+  let ok = true;
+  if (p === 1) {
+    if (!document.getElementById('firstName').value.trim()) { showError('firstName','First name is required'); ok = false; }
+    if (!document.getElementById('lastName').value.trim()) { showError('lastName','Last name is required'); ok = false; }
+    const em = document.getElementById('email').value.trim();
+    if (!em) { showError('email','Email is required'); ok = false; }
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { showError('email','Enter a valid email address'); ok = false; }
+    if (!document.getElementById('businessName').value.trim()) { showError('businessName','Business name is required'); ok = false; }
+    if (!document.getElementById('industry').value) { showError('industry','Select your industry'); ok = false; }
+  }
+  if (p === 2) {
+    if (!document.querySelectorAll('#contentTypes .check-item.selected').length) { showGroupError('contentTypes','Select at least one content type'); ok = false; }
+  }
+  if (p === 3) {
+    if (!document.querySelectorAll('#platforms .check-item.selected').length) { showGroupError('platforms','Select at least one platform'); ok = false; }
+  }
+  if (p === 5) {
+    if (!document.getElementById('delivery').value) { showError('delivery','Select a delivery method'); ok = false; }
+  }
+  return ok;
+}
+
 // ═══════════════ FORM NAVIGATION ═══════════════
 let currentPage = 1;
 const totalPages = 5;
-
 function goToPage(page) {
+  if (page > currentPage && !validatePage(currentPage)) return;
   document.getElementById('page' + currentPage).classList.remove('active');
   document.getElementById('page' + page).classList.add('active');
   currentPage = page;
-
-  // Update progress
   for (let i = 1; i <= totalPages; i++) {
     document.getElementById('prog' + i).classList.toggle('active', i <= page);
   }
   document.getElementById('progLabel').textContent = 'Step ' + page + ' of ' + totalPages;
-
-  // Scroll to form top
   document.getElementById('formContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // ═══════════════ CHECKBOX TOGGLE ═══════════════
 function toggleCheck(el) {
   el.classList.toggle('selected');
-  const input = el.querySelector('input');
-  input.checked = !input.checked;
+  el.querySelector('input').checked = el.classList.contains('selected');
 }
 
 // ═══════════════ RANGE SLIDER ═══════════════
@@ -1318,6 +1382,7 @@ function updateRange(el) {
 
 // ═══════════════ PRICING CALCULATOR ═══════════════
 function showEstimate() {
+  if (!validatePage(currentPage)) return;
   const videos = parseInt(document.getElementById('videosPerMonth').value);
   const platforms = document.querySelectorAll('#platforms .check-item.selected').length;
   const captions = document.getElementById('captions').value;
@@ -1325,64 +1390,45 @@ function showEstimate() {
   const analytics = document.getElementById('analytics').value;
   const multiCut = document.getElementById('multiCut').value;
 
-  // Calculate actual renders (accounting for multi-cut)
-  let renderMultiplier = 1;
-  if (multiCut === 'yes-2') renderMultiplier = 2.5;
-  if (multiCut === 'yes-5') renderMultiplier = 4.5;
-  const totalRenders = Math.ceil(videos * renderMultiplier);
+  // Base: $297/mo (8 videos included)
+  let base = 297;
+  // +$25/video above 8
+  let extraVid = Math.max(0, videos - 8) * 25;
+  let renderCost = base + extraVid;
+  // +$29/platform (first included)
+  let platCost = Math.max(0, platforms - 1) * 29;
+  // Captions: burned-in +$49, SRT +$29, both +$69
+  let capCost = 0;
+  if (captions === 'yes') capCost = 49;
+  else if (captions === 'srt') capCost = 29;
+  else if (captions === 'both') capCost = 69;
+  // Thumbnails: AI +$39, template +$19
+  let thumbCost = 0;
+  if (thumbnails === 'yes') thumbCost = 39;
+  else if (thumbnails === 'template') thumbCost = 19;
+  // Analytics: weekly +$49, monthly +$29, real-time +$59
+  let analCost = 0;
+  if (analytics === 'weekly') analCost = 49;
+  else if (analytics === 'monthly') analCost = 29;
+  else if (analytics === 'realtime') analCost = 59;
+  // Multiple cuts: 2-3 +$99, 4-5 +$199
+  let cutCost = 0;
+  if (multiCut === 'yes-2') cutCost = 99;
+  else if (multiCut === 'yes-5') cutCost = 199;
 
-  // ── COST BREAKDOWN (our internal cost + profit margin) ──
-  // Rendering: ~$0.40/render cost → charge $2.50/render (6x margin)
-  const renderingCost = Math.max(totalRenders * 2.50, 25);
+  let total = renderCost + platCost + capCost + thumbCost + analCost + cutCost;
 
-  // Platform publishing: ~$6/platform cost → charge $15/platform
-  const publishingCost = Math.max(platforms * 15, 15);
-
-  // Captions: $0.10/min cost → charge $1.50/video
-  let captionsCost = 0;
-  if (captions !== 'no') {
-    captionsCost = videos * 1.50;
-    if (captions === 'both') captionsCost = videos * 2.00;
-  }
-
-  // Thumbnails: ~$0.05 cost → charge $2/video
-  let thumbnailsCost = 0;
-  if (thumbnails !== 'no') {
-    thumbnailsCost = videos * 2.00;
-    if (thumbnails === 'template') thumbnailsCost = videos * 1.50;
-  }
-
-  // Automation base (Zapier + GHL + infra overhead): charge $49 flat
-  const automationCost = 49;
-
-  // Analytics: charge $19-39 depending on level
-  let analyticsCost = 0;
-  if (analytics === 'monthly') analyticsCost = 19;
-  if (analytics === 'weekly') analyticsCost = 29;
-  if (analytics === 'realtime') analyticsCost = 39;
-
-  // Total
-  let total = renderingCost + publishingCost + captionsCost + thumbnailsCost + automationCost + analyticsCost;
-
-  // Minimum floor: $197/mo (ensures profitability on low-volume clients)
-  total = Math.max(total, 197);
-
-  // Round to nearest clean number
-  total = Math.ceil(total / 10) * 10 - 3; // ends in 7 (e.g. $297, $397, $497)
-
-  // Update DOM
-  document.getElementById('costRendering').textContent = '$' + Math.round(renderingCost);
-  document.getElementById('costPublishing').textContent = '$' + Math.round(publishingCost);
+  document.getElementById('costRendering').textContent = '$' + renderCost;
+  document.getElementById('costPublishing').textContent = platCost > 0 ? '$' + platCost : 'Included';
   document.getElementById('platformCount').textContent = platforms || 1;
-  document.getElementById('costCaptions').textContent = captionsCost > 0 ? '$' + Math.round(captionsCost) : 'Included';
-  document.getElementById('costThumbnails').textContent = thumbnailsCost > 0 ? '$' + Math.round(thumbnailsCost) : 'N/A';
-  document.getElementById('costAutomation').textContent = '$' + automationCost;
-  document.getElementById('costAnalytics').textContent = analyticsCost > 0 ? '$' + analyticsCost : 'N/A';
+  document.getElementById('costCaptions').textContent = capCost > 0 ? '$' + capCost : 'Included';
+  document.getElementById('costThumbnails').textContent = thumbCost > 0 ? '$' + thumbCost : 'N/A';
+  document.getElementById('costAutomation').textContent = cutCost > 0 ? '$' + cutCost : 'Included';
+  document.getElementById('costAnalytics').textContent = analCost > 0 ? '$' + analCost : 'Included';
   document.getElementById('totalPrice').textContent = '$' + total;
   document.getElementById('totalPriceBreakdown').textContent = '$' + total + '/mo';
   document.getElementById('featureVideos').textContent = videos;
 
-  // Show estimate card, hide form
   document.getElementById('formContainer').style.display = 'none';
   document.getElementById('estimateCard').classList.add('visible');
   document.getElementById('estimateCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1395,12 +1441,9 @@ const PAYMENT_LINKS = {
   497: 'https://buy.stripe.com/14A4gAaXrcTwaf3dzj4Ni02',
   797: 'https://buy.stripe.com/14A7sMe9DcTwcnb0Mx4Ni03'
 };
-
-// GHL Webhook endpoint
 const GHL_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/vcDCbEshAYcyN7hAnJVk/webhook-trigger/62c1cccf-7607-41f5-b4b4-81382e793c2f';
 
 function getPaymentLink(price) {
-  // Map calculated price to nearest tier
   if (price <= 247) return PAYMENT_LINKS[197];
   if (price <= 397) return PAYMENT_LINKS[297];
   if (price <= 647) return PAYMENT_LINKS[497];
@@ -1410,71 +1453,75 @@ function getPaymentLink(price) {
 // ═══════════════ FORM SUBMISSION ═══════════════
 async function submitForm() {
   const btn = document.querySelector('.btn-submit');
-  btn.textContent = 'Processing...';
+  const origHTML = btn.innerHTML;
+  btn.innerHTML = '<span class="spinner"></span> Submitting...';
   btn.disabled = true;
 
-  // Collect all form data
   const data = {
     source: 'zorro-nation-onboarding',
     formType: 'onboarding',
-    firstName: document.getElementById('firstName').value,
-    lastName: document.getElementById('lastName').value,
+    first_name: document.getElementById('firstName').value,
+    last_name: document.getElementById('lastName').value,
     email: document.getElementById('email').value,
     phone: document.getElementById('phone').value,
-    businessName: document.getElementById('businessName').value,
+    business_name: document.getElementById('businessName').value,
     website: document.getElementById('website').value,
     industry: document.getElementById('industry').value,
-    contentTypes: [...document.querySelectorAll('#contentTypes .check-item.selected input')].map(i => i.value).join(', '),
-    videosPerMonth: document.getElementById('videosPerMonth').value,
-    avgLength: document.getElementById('avgLength').value,
-    multiCut: document.getElementById('multiCut').value,
-    contentStyle: document.getElementById('contentStyle').value,
-    multiCut: document.getElementById('multiCut').value,
+    content_types: [...document.querySelectorAll('#contentTypes .check-item.selected input')].map(i => i.value).join(', '),
+    videos_per_month: parseInt(document.getElementById('videosPerMonth').value),
+    raw_video_length: document.getElementById('avgLength').value,
+    multiple_cuts: document.getElementById('multiCut').value,
+    content_style: document.getElementById('contentStyle').value,
     platforms: [...document.querySelectorAll('#platforms .check-item.selected input')].map(i => i.value).join(', '),
-    publishMode: document.getElementById('publishMode').value,
-    postFrequency: document.getElementById('postFrequency').value,
+    scheduling_preference: document.getElementById('publishMode').value,
+    posting_frequency: document.getElementById('postFrequency').value,
     captions: document.getElementById('captions').value,
     thumbnails: document.getElementById('thumbnails').value,
-    brandGuide: document.getElementById('brandGuide').value,
-    brandColors: document.getElementById('brandColors').value,
-    introOutro: document.getElementById('introOutro').value,
-    music: document.getElementById('music').value,
-    captionStyle: document.getElementById('captionStyle').value,
+    brand_guidelines: document.getElementById('brandGuide').value,
+    brand_colors: document.getElementById('brandColors').value,
+    intro_outro: document.getElementById('introOutro').value,
+    music_preference: document.getElementById('music').value,
+    caption_style: document.getElementById('captionStyle').value,
     watermark: document.getElementById('watermark').value,
-    brandNotes: document.getElementById('brandNotes').value,
-    delivery: document.getElementById('delivery').value,
+    brand_notes: document.getElementById('brandNotes').value,
+    footage_delivery: document.getElementById('delivery').value,
     analytics: document.getElementById('analytics').value,
-    slackChannel: document.getElementById('slackChannel').value,
-    launchDate: document.getElementById('launchDate').value,
-    additionalNotes: document.getElementById('additionalNotes').value,
-    estimatedPrice: document.getElementById('totalPrice').textContent,
-    submittedAt: new Date().toISOString()
+    slack_channel: document.getElementById('slackChannel').value,
+    launch_date: document.getElementById('launchDate').value,
+    additional_notes: document.getElementById('additionalNotes').value,
+    monthly_total: parseInt(document.getElementById('totalPrice').textContent.replace('$','')),
+    submitted_at: new Date().toISOString()
   };
 
+  // Send to GHL webhook with CORS fallback
   try {
-    // 1. Send to GHL webhook (creates contact + triggers workflow)
     await fetch(GHL_WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
   } catch (e) {
-    // Webhook may fail on CORS from file:// — still continue to payment
-    console.log('GHL webhook:', e.message);
+    try {
+      await fetch(GHL_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        mode: 'no-cors'
+      });
+    } catch (e2) {
+      console.error('GHL webhook error:', e2);
+    }
   }
 
-  // 2. Get the correct Stripe payment link based on estimate
-  const priceNum = parseInt(data.estimatedPrice.replace('$', ''));
-  const paymentUrl = getPaymentLink(priceNum);
+  // Redirect to Stripe payment
+  const paymentUrl = getPaymentLink(data.monthly_total);
 
-  // 3. Show success screen
   document.getElementById('estimateCard').style.display = 'none';
   document.getElementById('successScreen').classList.add('visible');
   document.getElementById('successScreen').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-  // 4. Redirect to Stripe payment after short delay
   setTimeout(() => {
-    window.open(paymentUrl + '?prefilled_email=' + encodeURIComponent(data.email) + '&client_reference_id=' + encodeURIComponent(data.businessName), '_blank');
+    window.open(paymentUrl + '?prefilled_email=' + encodeURIComponent(data.email) + '&client_reference_id=' + encodeURIComponent(data.business_name), '_blank');
   }, 2000);
 }
 </script>
