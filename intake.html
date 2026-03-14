@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Intake â ZorroNation</title>
+  <style>
+    :root {
+      --gold: #D4AF37;
+      --gold-dark: #B8941E;
+      --dark: #0D0D0D;
+      --dark2: #1A1A1A;
+      --dark3: #2A2A2A;
+      --light: #F5F5F5;
+      --gray: #888;
+      --success: #28a745;
+      --error: #dc3545;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--dark);
+      color: var(--light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .intake-wrapper {
+      width: 100%;
+      max-width: 640px;
+    }
+    .brand-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .brand-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+    .brand-header p {
+      color: var(--gray);
+      margin-top: 6px;
+      font-size: 14px;
+    }
+    /* Progress bar */
+    .progress-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 32px;
+    }
+    .step-dot {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--dark3);
+      border: 2px solid var(--dark3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 600; color: var(--gray);
+      transition: all 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+    .step-dot.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--dark);
+    }
+    .step-dot.done {
+      background: var(--gold-dark);
+      border-color: var(--gold-dark);
+      color: var(--dark);
+    }
+    .step-line {
+      width: 48px; height: 2px;
+      background: var(--dark3);
+      transition: background 0.3s;
+    }
+    .step-line.done { background: var(--gold-dark); }
+
+    /* Form card */
+    .form-card {
+      background: var(--dark2);
+      border: 1px solid var(--dark3);
+      border-radius: 12px;
+      padding: 36px 32px;
+    }
+    .form-card h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .form-card .step-desc {
+      color: var(--gray);
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+    /* Steps hidden by default */
+    .step { display: none; }
+    .step.active { display: block; }
+
+    /* Form fields */
+    .field-group {
+      margin-bottom: 20px;
+    }
+    .field-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--light);
+      margin-bottom: 6px;
+    }
+    .field-group label .req { color: var(--gold); }
+    .field-group input,
+    .field-group textarea,
+    .field-group select {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--dark);
+      border: 1px solid var(--dark3);
+      border-radius: 8px;
+      color: var(--light);
+      font-size: 15px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .field-group input:focus,
+    .field-group textarea:focus,
+    .field-group select:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .field-group textarea { resize: vertical; min-height: 100px; }
+    .field-group input::placeholder,
+    .field-group textarea::placeholder {
+      color: #555;
+    }
+    .field-group select option { background: var(--dark2); color: var(--light); }
+    .field-group .field-hint {
+      font-size: 11px;
+      color: var(--gray);
+      margin-top: 4px;
+    }
+    .field-error {
+      font-size: 12px;
+      color: var(--error);
+      margin-top: 4px;
+      display: none;
+    }
+    .field-group.error input,
+    .field-group.error textarea,
+    .field-group.error select {
+      border-color: var(--error);
+    }
+    .field-group.error .field-error { display: block; }
+
+    /* Checkbox group */
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--dark);
+      border: 1px solid var(--dark3);
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 400;
+      transition: all 0.2s;
+      flex: 1 1 calc(50% - 5px);
+      min-width: 140px;
+    }
+    .checkbox-group label:hover { border-color: var(--gold); }
+    .checkbox-group input[type="checkbox"] {
+      width: 16px; height: 16px;
+      accent-color: var(--gold);
+    }
+    .checkbox-group input[type="checkbox"]:checked + span {
+      color: var(--gold);
+    }
+
+    /* Row layout */
+    .row { display: flex; gap: 16px; }
+    .row .field-group { flex: 1; }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 28px;
+      gap: 12px;
+    }
+    .btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .btn-back {
+      background: var(--dark3);
+      color: var(--light);
+    }
+    .btn-back:hover { background: #333; }
+    .btn-next,
+    .btn-submit {
+      background: var(--gold);
+      color: var(--dark);
+      margin-left: auto;
+    }
+    .btn-next:hover,
+    .btn-submit:hover { background: var(--gold-dark); }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Review section */
+    .review-section {
+      margin-bottom: 20px;
+    }
+    .review-section h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--dark3);
+    }
+    .review-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 14px;
+    }
+    .review-row .rlabel { color: var(--gray); }
+    .review-row .rvalue { color: var(--light); text-align: right; max-width: 60%; }
+
+    /* Success state */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .success-screen .checkmark {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: var(--success);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+    .success-screen h2 {
+      color: var(--gold);
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .success-screen p {
+      color: var(--gray);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid var(--dark);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 520px) {
+      .form-card { padding: 24px 18px; }
+      .row { flex-direction: column; gap: 0; }
+      .checkbox-group label { flex: 1 1 100%; }
+      .btn { padding: 12px 20px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="intake-wrapper">
+    <div class="brand-header">
+      <h1>ZORRONATION</h1>
+      <p>Client Intake Form</p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar">
+      <div class="step-dot active" data-step="0">1</div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="1">2</div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="2">3</div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="3">4</div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="4">5</div>
+    </div>
+
+    <div class="form-card">
+      <form id="intakeForm" novalidate>
+
+        <!-- STEP 1: Contact Info -->
+        <div class="step active" data-step="0">
+          <h2>Contact Information</h2>
+          <p class="step-desc">Tell us who you are so we can get in touch.</p>
+          <div class="row">
+            <div class="field-group">
+              <label>First Name <span class="req">*</span></label>
+              <input type="text" name="firstName" placeholder="e.g. Jonathan" required>
+              <div class="field-error">First name is required.</div>
+            </div>
+            <div class="field-group">
+              <label>Last Name <span class="req">*</span></label>
+              <input type="text" name="lastName" placeholder="e.g. Rangel" required>
+              <div class="field-error">Last name is required.</div>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Email <span class="req">*</span></label>
+            <input type="email" name="email" placeholder="you@company.com" required>
+            <div class="field-error">A valid email is required.</div>
+          </div>
+          <div class="field-group">
+            <label>Phone <span class="req">*</span></label>
+            <input type="tel" name="phone" placeholder="+1 (555) 123-4567" required>
+            <div class="field-error">Phone number is required.</div>
+          </div>
+          <div class="field-group">
+            <label>Business Name <span class="req">*</span></label>
+            <input type="text" name="companyName" placeholder="Your business or brand name" required>
+            <div class="field-error">Business name is required.</div>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-next" onclick="nextStep()">Next &rarr;</button>
+          </div>
+        </div>
+
+        <!-- STEP 2: Content Details -->
+        <div class="step" data-step="1">
+          <h2>Content Details</h2>
+          <p class="step-desc">What kind of content are you looking for?</p>
+          <div class="field-group">
+            <label>Content Strategy <span class="req">*</span></label>
+            <textarea name="contentStrategy" placeholder="Describe the type of content you need â promotional videos, social reels, brand storytelling, product demos, etc." required></textarea>
+            <div class="field-error">Please describe your content strategy.</div>
+          </div>
+          <div class="field-group">
+            <label>Target Platforms <span class="req">*</span></label>
+            <div class="checkbox-group" id="platformGroup">
+              <label><input type="checkbox" name="targetPlatforms" value="YouTube"><span>YouTube</span></label>
+              <label><input type="checkbox" name="targetPlatforms" value="Instagram"><span>Instagram</span></label>
+              <label><input type="checkbox" name="targetPlatforms" value="TikTok"><span>TikTok</span></label>
+              <label><input type="checkbox" name="targetPlatforms" value="Facebook"><span>Facebook</span></label>
+              <label><input type="checkbox" name="targetPlatforms" value="LinkedIn"><span>LinkedIn</span></label>
+              <label><input type="checkbox" name="targetPlatforms" value="Twitter/X"><span>Twitter / X</span></label>
+            </div>
+            <div class="field-error">Select at least one platform.</div>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-back" onclick="prevStep()">&larr; Back</button>
+            <button type="button" class="btn btn-next" onclick="nextStep()">Next &rarr;</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Branding -->
+        <div class="step" data-step="2">
+          <h2>Branding</h2>
+          <p class="step-desc">Share your brand guidelines and delivery preferences.</p>
+          <div class="field-group">
+            <label>Branding Info</label>
+            <textarea name="brandingInfo" placeholder="Colors, fonts, logos, brand voice â anything that helps us match your style. Include links to existing assets if available."></textarea>
+            <div class="field-hint">Optional â but the more detail the better.</div>
+          </div>
+          <div class="field-group">
+            <label>Delivery Method <span class="req">*</span></label>
+            <select name="deliveryMethod" required>
+              <option value="" disabled selected>Choose how you'd like to receive files</option>
+              <option value="Box Upload">Box Upload (we upload to your folder)</option>
+              <option value="Google Drive">Google Drive</option>
+              <option value="Dropbox">Dropbox</option>
+              <option value="WeTransfer">WeTransfer</option>
+              <option value="Other">Other</option>
+            </select>
+            <div class="field-error">Please select a delivery method.</div>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-back" onclick="prevStep()">&larr; Back</button>
+            <button type="button" class="btn btn-next" onclick="nextStep()">Next &rarr;</button>
+          </div>
+        </div>
+
+        <!-- STEP 4: Production -->
+        <div class="step" data-step="3">
+          <h2>Production</h2>
+          <p class="step-desc">Help us plan your content production schedule.</p>
+          <div class="field-group">
+            <label>Videos Per Month <span class="req">*</span></label>
+            <input type="number" name="videosPerMonth" min="1" max="100" placeholder="e.g. 8" required>
+            <div class="field-hint">How many finished videos do you need each month?</div>
+            <div class="field-error">Please enter the number of videos.</div>
+          </div>
+          <div class="field-group">
+            <label>Special Notes</label>
+            <textarea name="specialNotes" placeholder="Anything else we should know â deadlines, preferred editors, recurring themes, specific formats, etc."></textarea>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-back" onclick="prevStep()">&larr; Back</button>
+            <button type="button" class="btn btn-next" onclick="nextStep()">Review &rarr;</button>
+          </div>
+        </div>
+
+        <!-- STEP 5: Review & Submit -->
+        <div class="step" data-step="4">
+          <h2>Review & Submit</h2>
+          <p class="step-desc">Please confirm your details before submitting.</p>
+          <div id="reviewContent"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-back" onclick="prevStep()">&larr; Back</button>
+            <button type="button" class="btn btn-submit" id="submitBtn" onclick="submitForm()">Submit Application</button>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- Success Screen -->
+      <div class="success-screen" id="successScreen">
+        <div class="checkmark">&#10003;</div>
+        <h2>You're In!</h2>
+        <p>Your intake form has been submitted successfully.<br>
+        Our team will review your details and reach out within 24 hours.<br><br>
+        Welcome to ZorroNation.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 0;
+    const totalSteps = 5;
+
+    function updateProgress() {
+      const dots = document.querySelectorAll('.step-dot');
+      const lines = document.querySelectorAll('.step-line');
+      dots.forEach((dot, i) => {
+        dot.classList.remove('active', 'done');
+        if (i === currentStep) dot.classList.add('active');
+        else if (i < currentStep) dot.classList.add('done');
+      });
+      lines.forEach((line, i) => {
+        line.classList.toggle('done', i < currentStep);
+      });
+    }
+
+    function showStep(step) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+      currentStep = step;
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function validateStep(step) {
+      const stepEl = document.querySelector(`.step[data-step="${step}"]`);
+      const fields = stepEl.querySelectorAll('[required]');
+      let valid = true;
+
+      fields.forEach(field => {
+        const group = field.closest('.field-group');
+        if (!group) return;
+        group.classList.remove('error');
+
+        if (field.type === 'email') {
+          if (!field.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)) {
+            group.classList.add('error');
+            valid = false;
+          }
+        } else if (field.type === 'checkbox') {
+          // Handled separately for checkbox groups
+        } else if (field.tagName === 'SELECT') {
+          if (!field.value) {
+            group.classList.add('error');
+            valid = false;
+          }
+        } else {
+          if (!field.value.trim()) {
+            group.classList.add('error');
+            valid = false;
+          }
+        }
+      });
+
+      // Check checkbox group on step 1 (Target Platforms)
+      if (step === 1) {
+        const checked = stepEl.querySelectorAll('input[name="targetPlatforms"]:checked');
+        const group = document.getElementById('platformGroup').closest('.field-group');
+        if (checked.length === 0) {
+          group.classList.add('error');
+          valid = false;
+        } else {
+          group.classList.remove('error');
+        }
+      }
+
+      return valid;
+    }
+
+    function nextStep() {
+      if (!validateStep(currentStep)) return;
+      if (currentStep === 3) buildReview();
+      showStep(currentStep + 1);
+    }
+
+    function prevStep() {
+      if (currentStep > 0) showStep(currentStep - 1);
+    }
+
+    function getFormData() {
+      const form = document.getElementById('intakeForm');
+      const platforms = Array.from(form.querySelectorAll('input[name="targetPlatforms"]:checked')).map(c => c.value);
+      return {
+        firstName: form.firstName.value.trim(),
+        lastName: form.lastName.value.trim(),
+        email: form.email.value.trim(),
+        phone: form.phone.value.trim(),
+        companyName: form.companyName.value.trim(),
+        contentStrategy: form.contentStrategy.value.trim(),
+        targetPlatforms: platforms,
+        brandingInfo: form.brandingInfo.value.trim(),
+        deliveryMethod: form.deliveryMethod.value,
+        videosPerMonth: form.videosPerMonth.value,
+        specialNotes: form.specialNotes.value.trim()
+      };
+    }
+
+    function buildReview() {
+      const d = getFormData();
+      const html = `
+        <div class="review-section">
+          <h3>Contact Information</h3>
+          <div class="review-row"><span class="rlabel">Name</span><span class="rvalue">${d.firstName} ${d.lastName}</span></div>
+          <div class="review-row"><span class="rlabel">Email</span><span class="rvalue">${d.email}</span></div>
+          <div class="review-row"><span class="rlabel">Phone</span><span class="rvalue">${d.phone}</span></div>
+          <div class="review-row"><span class="rlabel">Business</span><span class="rvalue">${d.companyName}</span></div>
+        </div>
+        <div class="review-section">
+          <h3>Content Details</h3>
+          <div class="review-row"><span class="rlabel">Strategy</span><span class="rvalue">${d.contentStrategy.substring(0, 120)}${d.contentStrategy.length > 120 ? '...' : ''}</span></div>
+          <div class="review-row"><span class="rlabel">Platforms</span><span class="rvalue">${d.targetPlatforms.join(', ')}</span></div>
+        </div>
+        <div class="review-section">
+          <h3>Branding</h3>
+          <div class="review-row"><span class="rlabel">Branding Info</span><span class="rvalue">${d.brandingInfo ? d.brandingInfo.substring(0, 80) + (d.brandingInfo.length > 80 ? '...' : '') : 'â'}</span></div>
+          <div class="review-row"><span class="rlabel">Delivery</span><span class="rvalue">${d.deliveryMethod}</span></div>
+        </div>
+        <div class="review-section">
+          <h3>Production</h3>
+          <div class="review-row"><span class="rlabel">Videos/Month</span><span class="rvalue">${d.videosPerMonth}</span></div>
+          <div class="review-row"><span class="rlabel">Notes</span><span class="rvalue">${d.specialNotes ? d.specialNotes.substring(0, 80) + (d.specialNotes.length > 80 ? '...' : '') : 'â'}</span></div>
+        </div>
+      `;
+      document.getElementById('reviewContent').innerHTML = html;
+    }
+
+    async function submitForm() {
+      if (!validateStep(currentStep)) return;
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+      const d = getFormData();
+
+      // POST to GHL Webhook
+      const webhookURL = 'https://services.leadconnectorhq.com/hooks/vcDCbEshAYcyN7hAnJVk/webhook-trigger/62c1cccf-7607-41f5-b4b4-81382e793c2f';
+      const payload = {
+        first_name: d.firstName,
+        last_name: d.lastName,
+        email: d.email,
+        phone: d.phone,
+        company_name: d.companyName,
+        content_strategy: d.contentStrategy,
+        target_platforms: d.targetPlatforms.join(', '),
+        branding_info: d.brandingInfo,
+        delivery_method: d.deliveryMethod,
+        videos_per_month: d.videosPerMonth,
+        special_notes: d.specialNotes,
+        source: 'ZorroNation Client Intake Form',
+        form_name: 'Client Intake'
+      };
+
+      try {
+        const res = await fetch(webhookURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error('Webhook returned ' + res.status);
+
+        // Show success
+        document.getElementById('intakeForm').style.display = 'none';
+        document.getElementById('successScreen').style.display = 'block';
+        document.querySelector('.progress-bar').style.display = 'none';
+
+      } catch (err) {
+        console.error('Submission error:', err);
+        btn.disabled = false;
+        btn.textContent = 'Submit Application';
+        alert('Something went wrong. Please try again or contact us at zmeventsbooking@gmail.com');
+      }
+    }
+  </script>
+</body>
+</html>
