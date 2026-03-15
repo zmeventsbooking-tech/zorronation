@@ -9,13 +9,13 @@
       --gold: #D4AF37;
       --gold-dark: #B8941E;
       --dark: #0D0D0D;
-      --dark2: #1A1A1A;
+      --dark2: #1A1A1A
       --dark3: #2A2A2A;
       --light: #F5F5F5;
       --gray: #888;
       --success: #28a745;
       --error: #dc3545;
-    }
+    
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -592,8 +592,8 @@
 
       const d = getFormData();
 
-      // POST to GHL Webhook
-      const webhookURL = 'https://services.leadconnectorhq.com/hooks/vcDCbEshAYcyN7hAnJVk/webhook-trigger/62c1cccf-7607-41f5-b4b4-81382e793c2f';
+      // POST to Zapier Webhook
+      const webhookURL = 'https://hooks.zapier.com/hooks/catch/26712963/uxjdssh/';
       const payload = {
         first_name: d.firstName,
         last_name: d.lastName,
