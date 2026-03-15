@@ -583,7 +583,7 @@
       document.getElementById('reviewContent').innerHTML = html;
     }
 
-    async function submitForm() {
+    function submitForm() {
       if (!validateStep(currentStep)) return;
 
       const btn = document.getElementById('submitBtn');
@@ -594,7 +594,8 @@
 
       // POST to Zapier Webhook
       const webhookURL = 'https://hooks.zapier.com/hooks/catch/26712963/uxjdssh/';
-      const payload = {
+      // Build snake_case params for Zapier Catch Hook
+      const params = new URLSearchParams({
         first_name: d.firstName,
         last_name: d.lastName,
         email: d.email,
@@ -608,16 +609,12 @@
         special_notes: d.specialNotes,
         source: 'ZorroNation Client Intake Form',
         form_name: 'Client Intake'
-      };
+      });
 
       try {
-        const res = await fetch(webhookURL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        if (!res.ok) throw new Error('Webhook returned ' + res.status);
+        // sendBeacon bypasses extension blocking; sends as URL query params
+        const sent = navigator.sendBeacon(webhookURL + '?' + params.toString());
+        if (!sent) throw new Error('sendBeacon failed');
 
         // Show success
         document.getElementById('intakeForm').style.display = 'none';
